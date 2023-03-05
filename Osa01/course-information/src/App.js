@@ -1,47 +1,47 @@
 let App = () => {
-
-  let course = 'Half Stack application development'
-  let part1 = {
-    name: 'Fundamentals of React',
-    exercises: 10
+  let course = {
+    name: 'Half Stack application development',
+    parts: [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        name: 'State of a component',
+        exercises: 14
+      }
+    ]
   }
-  
-  let part2 = {
-    name: 'Using props to pass data',
-    exercises: 7
-  } 
-
-  let part3 = {
-    name: 'State of a component',
-    exercises: 14
-  }
-
   let Header = () => {
-    return <p>{course}</p>
-  }
+      return <p>{course.name}</p>
+    }
 
   let Content = () => {
-    return (
-    <div>
-    {part1.name} {part1.exercises}<br></br>
-    {part2.name} {part2.exercises}<br></br>
-    {part3.name} {part3.exercises}
-    </div>
-    );
-  }
+      return (
+        <div>
+          {course.parts[0].name} {course.parts[0].exercises}<br></br>
+          {course.parts[1].name} {course.parts[1].exercises}<br></br>
+          {course.parts[2].name} {course.parts[2].exercises}
+        </div>
+      );
+    }
 
   let Total = () => {
-    return <p>Number of exercises {part1.exercises + part2.exercises + part3.exercises}</p>
-  }
-  
+      return <p>Number of exercises {course.parts[0].exercises+course.parts[1].exercises+course.parts[2].exercises}</p>
+    }
 
 
-  return (
+
+  return(
     <div>
       <Header/>
       <Content/>
       <Total/>
-    </div>
+    </div >
   );
 }
 
