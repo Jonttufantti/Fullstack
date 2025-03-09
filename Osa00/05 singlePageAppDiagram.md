@@ -1,30 +1,31 @@
 sequenceDiagram
     participant browser
     participant server
-    
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
-    activate server
-    server-->>browser: spa.js file
-    deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
-    server-->>browser: HTML-document
+    server-->>browser: HTML shell
     deactivate server
-    
+
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
     activate server
-    server-->>browser: main.css file
+    server-->>browser: CSS file
     deactivate server
 
-    browser->>server: GET chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/installHook.js
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
     activate server
-    server-->>browser: installHook.js file
+    server-->>browser: JavaScript file
     deactivate server
+
+    Note right of browser: JavaScript dynamically handles the page content
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+
     activate server
-    server-->>browser: [{ "content": "test","date":"2023-02-22T02:51:05.048Z"}, ... ]
+    server-->>browser: JSON (existing notes)
     deactivate server
+
+    Note right of browser: The browser renders notes without a page reload
+
     
 
