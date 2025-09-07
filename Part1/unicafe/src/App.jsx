@@ -7,16 +7,20 @@ const Button = (props) => (
 )
 
 const Statistics = (props) => {
-  return (
-    <div>
-      <p>Good {props.good}</p>
-      <p>Neutral {props.neutral}</p>
-      <p>Bad {props.bad}</p>
-      <p>All {props.total}</p>
-      <p>Average {props.average}</p>
-      <p>Positive {props.goodPercent}%</p>
-    </div>
-  )
+  if (props.total === 0) {
+    return <p>No feedback given</p>
+  } else {
+    return (
+      <div>
+        <p>Good {props.good}</p>
+        <p>Neutral {props.neutral}</p>
+        <p>Bad {props.bad}</p>
+        <p>All {props.total}</p>
+        <p>Average {props.average}</p>
+        <p>Positive {props.goodPercent}%</p>
+      </div>
+    )
+  }
 }
 
 const App = () => {
@@ -25,8 +29,8 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
   const total = good + bad + neutral
-  const average = total ? (good * 1 + bad * -1 + neutral * 0) / total : 0
-  const goodPercent = total ? (good / total * 100).toFixed(2) : 0
+  const average = (good * 1 + bad * -1 + neutral * 0) / total
+  const goodPercent = (good / total * 100).toFixed(2)
 
   const handleClick = (feedback) => {
     if (feedback === "good") setGood(good + 1)
