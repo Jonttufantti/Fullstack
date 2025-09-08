@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const Button = ({ onClick, text }) => (
   <button onClick={onClick}>{text}</button>
@@ -17,21 +17,35 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const votesInit = Array(anecdotes.length).fill(0);
+  const [votes, setVotes] = useState(votesInit)
 
   const getRandomInt = (max) => (
     Math.floor(Math.random() * max)
   )
 
-  const handleClick = () => {
-    const randomNumber = getRandomInt(anecdotes.length)
-    setSelected(randomNumber)
-  }
+  const handleClick = () => (
+    setSelected(getRandomInt(anecdotes.length))
+  )
+
+  const handleVote = () => {
+    setVotes(prev =>
+      prev.map((n, i) => (i === selected ? n + 1 : n)),
+    );
+  };
+
+  useEffect(() => {
+  console.log("Votes updated:", votes)
+}, [votes])
+
 
   return (
     <div>
       {anecdotes[selected]}
+      <p>has {votes[selected]} votes</p>
       <br />
-      <Button onClick={handleClick} text="next andecdote" />
+      <Button onClick={handleVote} text="Vote"/>
+      <Button onClick={handleClick} text="Next andecdote" />
     </div>
   )
 }
