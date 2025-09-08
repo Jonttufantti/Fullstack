@@ -16,9 +16,9 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
-  const [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState(0);
   const votesInit = Array(anecdotes.length).fill(0);
-  const [votes, setVotes] = useState(votesInit)
+  const [votes, setVotes] = useState(votesInit);
 
   const getRandomInt = (max) => (
     Math.floor(Math.random() * max)
@@ -34,18 +34,35 @@ const App = () => {
     );
   };
 
+  const maxVotes = Math.max(...votes)
+  const topIndex = votes.indexOf(maxVotes)
+
+
   useEffect(() => {
-  console.log("Votes updated:", votes)
-}, [votes])
+    console.log("Votes updated:", votes)
+  }, [votes])
 
 
   return (
     <div>
-      {anecdotes[selected]}
+      <h2>Anecdote of the day</h2>
+      <br />
+      <p>{anecdotes[selected]}</p>
       <p>has {votes[selected]} votes</p>
       <br />
-      <Button onClick={handleVote} text="Vote"/>
+      <Button onClick={handleVote} text="Vote" />
       <Button onClick={handleClick} text="Next andecdote" />
+      <br />
+      <h2>Anecdote with most votes</h2>
+      <br />
+      {maxVotes > 0 ? (
+        <>
+          <p>{anecdotes[topIndex]}</p>
+          <p>has {maxVotes} votes</p>
+        </>
+      ) : (
+        <p>No votes yet</p>
+      )}
     </div>
   )
 }
