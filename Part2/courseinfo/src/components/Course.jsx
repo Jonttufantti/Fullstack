@@ -11,14 +11,13 @@ const Content = ({ parts }) => {
     )
 }
 
-const Part = (props) => (
-    <li>{props.part.name} {props.part.exercises}</li>
+const Part = ({part}) => (
+    <li>{part.name} {part.exercises}</li>
 )
 
 const Total = ({ total }) => <strong>Total of exercises {total}</strong>;
 
 const Course = ({ course }) => {
-
     const totalExercises = course.parts.reduce((sum, part) => sum + part.exercises, 0);
 
     return (
