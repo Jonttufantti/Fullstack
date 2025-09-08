@@ -1,4 +1,4 @@
-const Header = ({course}) => <h1>{course}</h1>
+const Header = ({ course }) => <h1>{course}</h1>
 
 const Content = ({ parts }) => {
     return (
@@ -15,13 +15,22 @@ const Part = (props) => (
     <li>{props.part.name} {props.part.exercises}</li>
 )
 
-const Total = (props) => <p>Number of exercises {props.total}</p>
+const Total = ({ total }) => <strong>Total of exercises {total}</strong>;
 
 const Course = ({ course }) => {
+
+    let totalExercises = 0;
+
+    course.parts.forEach(part => {
+        totalExercises += part.exercises;
+    });
+
+
     return (
         <div>
             <Header course={course.name} />
             <Content parts={course.parts} />
+            <Total total={totalExercises} />
         </div>
     );
 }
