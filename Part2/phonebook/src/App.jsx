@@ -5,6 +5,7 @@ const App = (props) => {
   const [persons, setPersons] = useState(props.persons)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [searchPersons, setSearchPersons] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -24,21 +25,35 @@ const App = (props) => {
     }
   }
 
-
   const handleNameChange = (event) => {
     console.log(event.target.value)
     setNewName(event.target.value)
   }
 
-    const handleNumberChange = (event) => {
+  const handleNumberChange = (event) => {
     console.log(event.target.value)
     setNewNumber(event.target.value)
   }
+
+  const handleSearchPersons = (event) => {
+    console.log(event.target.value)
+    setSearchPersons(event.target.value)
+  }
+
+  const personsToShow = persons.filter(person =>
+    person.name.toLowerCase().includes(searchPersons.toLowerCase())
+  )
 
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <input
+        value={searchPersons}
+        onChange={handleSearchPersons}
+        placeholder='Search by name'
+      />
+      <h2>Add new</h2>
       <form onSubmit={addPerson}>
         <div>
           name: <input
@@ -60,7 +75,7 @@ const App = (props) => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map(person =>
+        {personsToShow.map(person =>
           <Person key={person.id} person={person.name} number={person.number} />
         )}
       </ul>
