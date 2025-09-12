@@ -11,7 +11,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchPersons, setSearchPersons] = useState('')
-  const [message, setMessage] = useState(null)
+  const [notification, setNotification] = useState({ text: null, type: null })
+
 
   useEffect(() => {
     personsService
@@ -40,12 +41,14 @@ const App = () => {
           .update(existingPerson.id, personObject)
           .then(updatedPerson => {
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : updatedPerson))
-            setMessage(`Updated number for ´${newName}`)
-            setTimeout(() => setMessage(null), 5000)
+            setNotification({ text: `Updated number for ${newName}`, type: `success` })
+            setTimeout(() => setNotification({text: null, type: null}), 5000)
           })
           .catch(error => {
-            setMessage(`Information of ${newName} was already removed from server`)
-            setTimeout(() => setMessage(null, 5000))
+            setNotification({ text: `Information of ${newName} was already removed from server`, type: 'error' })
+            setTimeout(() => {
+              setNotification({ text: null, type: null })
+            }, 5000)
             setPersons(persons.filter(p => p.id !== existingPerson.id))
           })
       }
@@ -54,11 +57,9 @@ const App = () => {
         .create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
-          setMessage(
-            `Added '${newName}'`
-          )
+          setNotification({ text: `Added '${newName}'`, type: 'success' })
           setTimeout(() => {
-            setMessage(null)
+            setNotification({ text: null, type: null })
           }, 5000)
           setNewName('')
           setNewNumber('')
@@ -88,10 +89,12 @@ const App = () => {
         .remove(id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
+          setNotification({ text: `The person '${name}' was succesfully removed from server`, type: `success` })
         })
         .catch(error => {
-          alert(`The person '${name}' was already removed from server`)
+          alert()
           setPersons(persons.filter(p => p.id !== id))
+          setNotification({ text: `The person '${name}' was already removed from server`, type: `error` })
         })
     }
   }
@@ -105,7 +108,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      <Notification message={message} />
+      <Notification notification={notification} />
 
       <Filter search={searchPersons} handleSearchPersons={handleSearchPersons} />
 
