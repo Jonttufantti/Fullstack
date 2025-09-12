@@ -30,19 +30,40 @@ const App = () => {
       number: newNumber,
     };
 
-    personsService
-      .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setMessage(
-          `Added '${newName}'`
-        )
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
-        setNewName('')
-        setNewNumber('')
-      })
+    const existingPerson = persons.find(p => p.name.toLowerCase() === newName.toLowerCase())
+
+    if (existingPerson) {
+      if (window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      )) {
+        personsService
+          .update(existingPerson.id, personObject)
+          .then(updatedPerson => {
+            setPersons(persons.map(p => p.id !== existingPerson.id ? p : updatedPerson))
+            setMessage(`Updated number for ´${newName}`)
+            setTimeout(() => setMessage(null), 5000)
+          })
+          .catch(error => {
+            setMessage(`Information of ${newName} was already removed from server`)
+            setTimeout(() => setMessage(null, 5000))
+            setPersons(persons.filter(p => p.id !== existingPerson.id))
+          })
+      }
+    } else {
+      personsService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setMessage(
+            `Added '${newName}'`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+          setNewName('')
+          setNewNumber('')
+        })
+    }
   }
 
   const handleNameChange = (event) => {
