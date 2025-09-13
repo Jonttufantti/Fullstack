@@ -6,14 +6,21 @@ function App() {
   const [countries, setCountries] = useState([])
   const [searchCountries, setSearchCountries] = useState('')
   const [header, setHeader] = useState('Search results')
+  const [countryToShow, setCountryToShow] = useState(null);
 
   const countriesToShow = countries.filter(country =>
     country.name.common.toLowerCase().includes(searchCountries.toLowerCase())
   )
 
   useEffect(() => {
+    setCountryToShow(null);
+  }, [searchCountries]);
+
+  useEffect(() => {
     if (countriesToShow.length === 1) {
       setHeader(countriesToShow[0].name.common);
+    } else if (countryToShow) {
+      setHeader(countryToShow.name.common);
     } else {
       setHeader('Search results');
     }
@@ -28,38 +35,48 @@ function App() {
     return null;
   }
 
-  const SearchResults = () => {
-    if (countriesToShow.length === 1) {
-      const country = countriesToShow[0];
-      return (
-        <div>
-          <p>Capital {country.capital}</p>
-          <p>Area {country.area}</p>
-          <br />
-          <h2>Languages</h2>
-          <ul>
-            {Object.values(country.languages).map(lang => (
-              <li key={lang}>{lang}</li>
-            ))}
-          </ul>
-          <img
-            alt={country.flags.alt || `${country.name.common} flag`}
-            src={country.flags.svg}
-            width="150"
-          />
-        </div>
-      )
+  const SearchResults = ({ countriesToShow, countryToShow, setCountryToShow }) => {
+
+    if (countryToShow) {
+      return <CountryDetails country={countryToShow} />;
     }
+
+    if (countriesToShow.length === 1) {
+      return <CountryDetails country={countriesToShow[0]} />;
+    }
+
+
     return (
-      <div>
-        <ul>
-          {countriesToShow.map(c => (
-            <li key={c.cca3} >{c.name.common}</li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
+      <ul>
+        {countriesToShow.map(c => (
+          <li key={c.cca3}>
+            {c.name.common}{" "}
+            <button onClick={() => setCountryToShow(c)}>show</button>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+
+  const CountryDetails = ({ country }) => (
+    <div>
+      <p>Capital: {country.capital}</p>
+      <p>Area: {country.area}</p>
+      <h3>Languages</h3>
+      <ul>
+        {Object.values(country.languages).map(lang => (
+          <li key={lang}>{lang}</li>
+        ))}
+      </ul>
+      <img
+        alt={country.flags.alt || `${country.name.common} flag`}
+        src={country.flags.svg}
+        width="150"
+      />
+    </div>
+  );
+
 
   useEffect(() => {
     getAll()
@@ -87,8 +104,12 @@ function App() {
 
         <Notification />
         <h2>{header} </h2>
-        <SearchResults />
 
+        <SearchResults
+          countriesToShow={countriesToShow}
+          countryToShow={countryToShow}
+          setCountryToShow={setCountryToShow}
+        />
       </div>
     </>
   )
