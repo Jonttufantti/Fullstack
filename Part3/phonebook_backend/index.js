@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const path = require('path')
 
 const app = express()
 
@@ -40,6 +41,14 @@ let persons = [
 const generateId = () => {
     return String(Math.floor(Math.random() * 1000000))
 }
+
+
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
+  }
+})
+
 
 app.get('/api/persons', (request, response) => {
     response.json(persons)
