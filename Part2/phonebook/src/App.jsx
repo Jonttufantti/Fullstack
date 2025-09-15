@@ -17,9 +17,9 @@ const App = () => {
   useEffect(() => {
     personsService
       .getAll()
-      .then(initalPersons => {
-        console.log('promise fulfilled')
-        setPersons(initalPersons)
+      .then(initialPersons => {
+        console.log('promise fulfilled', initialPersons)
+        setPersons(initialPersons)
       })
   }, [])
 

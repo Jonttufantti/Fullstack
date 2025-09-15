@@ -1,10 +1,12 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
 app.use(express.json())
 app.use(express.static('dist'))
+app.use(cors())
 
 morgan.token('body', (req) => { 
     return req.method === 'POST' ? JSON.stringify(req.body) : ''; 
@@ -38,11 +40,6 @@ let persons = [
 const generateId = () => {
     return String(Math.floor(Math.random() * 1000000))
 }
-
-
-app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
-})
 
 app.get('/api/persons', (request, response) => {
     response.json(persons)
