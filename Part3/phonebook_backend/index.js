@@ -1,6 +1,5 @@
 const express = require('express')
 const morgan = require('morgan')
-const cors = require('cors')
 
 const app = express()
 
@@ -40,6 +39,10 @@ const generateId = () => {
     return String(Math.floor(Math.random() * 1000000))
 }
 
+
+app.get('/', (request, response) => {
+    response.send('<h1>Hello World!</h1>')
+})
 
 app.get('/api/persons', (request, response) => {
     response.json(persons)
