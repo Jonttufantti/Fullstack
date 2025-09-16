@@ -22,7 +22,6 @@ if (!password) {
     process.exit(1);
 }
 
-
 morgan.token('body', (req) => {
     return req.method === 'POST' ? JSON.stringify(req.body) : '';
 })
@@ -73,7 +72,7 @@ app.get('/api/persons', (request, response) => {
 })
 
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id)
         .then(person => {
             if (person) {
@@ -82,6 +81,7 @@ app.get('/api/persons/:id', (request, response) => {
                 response.status(404).end()
             }
         })
+        .catch(error => next(error))
 })
 
 app.get('/info', (request, response) => {
@@ -111,14 +111,27 @@ app.post('/api/persons', (request, response) => {
         .then(savedPerson => response.json(savedPerson))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    persons = persons.filter(person => person.id !== id)
-
-    response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+    Person.findByIdAndDelete(request.params.id)
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
 app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
