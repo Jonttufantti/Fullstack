@@ -42,7 +42,7 @@ const App = () => {
           .then(updatedPerson => {
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : updatedPerson))
             setNotification({ text: `Updated number for ${newName}`, type: `success` })
-            setTimeout(() => setNotification({text: null, type: null}), 5000)
+            setTimeout(() => setNotification({ text: null, type: null }), 5000)
           })
           .catch(error => {
             setNotification({ text: `Information of ${newName} was already removed from server`, type: 'error' })
@@ -63,6 +63,13 @@ const App = () => {
           }, 5000)
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          console.log(error.response.data.error)
+          setNotification({ text: String(error.response.data.error), type: 'error' })
+          setTimeout(() => {
+            setNotification({ text: null, type: null })
+          }, 5000)
         })
     }
   }
