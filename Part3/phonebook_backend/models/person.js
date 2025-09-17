@@ -7,13 +7,17 @@ mongoose.set('strictQuery', false)
 const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
-mongoose.connect(url)
-
-  .then(result => {
+mmongoose.connect(url)
+  .then(() => {
     console.log('connected to MongoDB')
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`)
+    })
   })
   .catch(error => {
-    console.log('error connecting to MongoDB:', error.message)
+    console.error('error connecting to MongoDB:', error.message)
+    process.exit(1)
   })
 
 const personSchema = new mongoose.Schema({
