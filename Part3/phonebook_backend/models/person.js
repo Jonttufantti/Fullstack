@@ -8,17 +8,8 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 mongoose.connect(url)
-  .then(() => {
-    console.log('connected to MongoDB')
-
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`)
-    })
-  })
-  .catch(error => {
-    console.error('error connecting to MongoDB:', error.message)
-    process.exit(1)
-  })
+  .then(() => console.log('connected to MongoDB'))
+  .catch(error => console.error('error connecting to MongoDB:', error.message))
 
 const personSchema = new mongoose.Schema({
   name: {
