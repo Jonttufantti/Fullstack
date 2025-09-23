@@ -90,6 +90,23 @@ test('unique identifier property of blogs is named id', async () => {
 });
 
 
+test.only('blog without likes defaults to 0', async () => {
+  const newBlog = {
+    title: 'Blog with no likes',
+    author: 'Tester',
+    url: 'http://test.com'
+  };
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  assert.strictEqual(response.body.likes, 0);
+});
+
+
 after(async () => {
   await mongoose.connection.close()
 })
