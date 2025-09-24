@@ -131,6 +131,46 @@ describe('when there is initially some blogs saved', () => {
     });
   })
 
+  describe.only('Updating of a blog', () => {
+    test('succeeds with status code 200 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+
+      const updatedBlog = {
+        ...blogToUpdate,
+        likes: blogToUpdate.likes + 10
+      }
+
+      const result = await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updatedBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      assert.strictEqual(result.body.likes, blogToUpdate.likes + 10)
+
+
+      const blogsAtEnd = await helper.blogsInDb()
+      const found = blogsAtEnd.find(b => b.id === blogToUpdate.id)
+      assert.strictEqual(found.likes, blogToUpdate.likes + 10)
+    })
+    test('fails with status code 404 if id does not exist', async () => {
+      const nonExistingId = await helper.nonExistingId()
+
+      const updatedBlog = {
+        title: 'Nonexistent blog',
+        author: 'Nobody',
+        url: 'http://nope.com',
+        likes: 123
+      }
+
+      await api
+        .put(`/api/blogs/${nonExistingId}`)
+        .send(updatedBlog)
+        .expect(404)
+    })
+  })
+
   describe('deletion of a blog', () => {
     test('succeeds with status code 204 if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()

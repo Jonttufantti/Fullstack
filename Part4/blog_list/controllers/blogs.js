@@ -1,4 +1,5 @@
 const blogsRouter = require('express').Router()
+const { response } = require('express')
 const Blog = require('../models/blog')
 
 blogsRouter.get('/', async (request, response) => {
@@ -32,6 +33,29 @@ blogsRouter.get('/:id', async (request, response) => {
     response.status(400).json({ error: 'malformatted id' });
   }
 });
+
+blogsRouter.put('/:id', async (request, response) => {
+  const { title, author, url, likes } = request.body
+
+  try {
+    const blog = await Blog.findById(request.params.id);
+    if (blog) {
+      
+      blog.title= title
+        blog.author= author
+        blog.url= url
+        blog.likes= likes
+
+      return blog.save().then((updatedBlog) => {
+        response.json(updatedBlog)
+      })
+    }
+
+    response.status(404).end();
+  } catch (error) {
+    response.status(400).json({ error: 'malformatted id' });
+  }
+})
 
 blogsRouter.delete('/:id', async (request, response) => {
   try {

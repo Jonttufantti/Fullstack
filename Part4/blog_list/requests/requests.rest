@@ -12,3 +12,14 @@ Content-Type: application/json
   "url": "http://testi.com",
   "likes": 1
 }
+
+### Update blog
+PUT http://localhost:3001/api/blogs/68cc2fe77eac83e97cb2d7c6
+Content-Type: application/json
+
+{
+  "title": "Testi",
+  "author": "Joona",
+  "url": "http://testi.com",
+  "likes": 100
+}
