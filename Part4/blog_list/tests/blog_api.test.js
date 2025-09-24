@@ -106,6 +106,30 @@ test.only('blog without likes defaults to 0', async () => {
   assert.strictEqual(response.body.likes, 0);
 });
 
+test.only('blog without title is not added', async () => {
+  const newBlog = {
+    author: 'Tester',
+    url: 'http://notitle.com'
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400);
+});
+
+test.only('blog without url is not added', async () => {
+  const newBlog = {
+    title: 'No URL Blog',
+    author: 'Tester'
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400);
+});
+
 
 after(async () => {
   await mongoose.connection.close()
