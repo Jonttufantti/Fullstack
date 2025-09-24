@@ -11,10 +11,24 @@ const User = require('../models/user')
 const api = supertest(app)
 
 describe('when there is initially some blogs saved', () => {
+  let token
+
   beforeEach(async () => {
+    await User.deleteMany({})
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+    await user.save()
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' })
+
+    token = loginResponse.body.token
+
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
   })
+
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -80,6 +94,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -100,6 +115,7 @@ describe('when there is initially some blogs saved', () => {
 
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -115,6 +131,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400);
     });
@@ -127,6 +144,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400);
     });
@@ -144,6 +162,7 @@ describe('when there is initially some blogs saved', () => {
 
       const result = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(updatedBlog)
         .expect(200)
         .expect('Content-Type', /application\/json/)
@@ -167,6 +186,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .put(`/api/blogs/${nonExistingId}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(updatedBlog)
         .expect(404)
     })
@@ -191,16 +211,15 @@ describe('when there is initially some blogs saved', () => {
 })
 
 
-describe.only('when there is initially one user in db', () => {
+describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ 
-      username: 'root', 
-      passwordHash 
+    const user = new User({
+      username: 'root',
+      passwordHash
     })
-
     await user.save()
   })
 
@@ -226,7 +245,7 @@ describe.only('when there is initially one user in db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-   test('creation fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -245,6 +264,37 @@ describe.only('when there is initially one user in db', () => {
     assert(result.body.error.includes('expected `username` to be unique'))
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('creation fails with statuscode 400 if password is missing', async () => {
+    const newUser = {
+      username: 'nopassword',
+      name: 'No Pass User',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    assert(result.body.error.includes('password'))
+  })
+
+  test('creation fails with statuscode 400 if password is too short', async () => {
+    const newUser = {
+      username: 'shortpass',
+      name: 'Shorty',
+      password: 'pw',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    assert(result.body.error.includes('password must be at least 3 characters'))
   })
 })
 
