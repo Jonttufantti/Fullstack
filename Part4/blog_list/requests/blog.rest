@@ -10,7 +10,8 @@ Content-Type: application/json
   "title": "Testi",
   "author": "Joona",
   "url": "http://testi.com",
-  "likes": 1
+  "likes": 1,
+  "userId": "68d3df8c6f1e54e7337ca013"
 }
 
 ### Update blog
@@ -18,7 +19,7 @@ PUT http://localhost:3001/api/blogs/68cc2fe77eac83e97cb2d7c6
 Content-Type: application/json
 
 {
-  "title": "Testi",
+  "title": "Test2",
   "author": "Joona",
   "url": "http://testi.com",
   "likes": 100
