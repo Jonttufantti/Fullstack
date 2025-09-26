@@ -11,22 +11,37 @@ const User = require('../models/user')
 const api = supertest(app)
 
 describe('when there is initially some blogs saved', () => {
-  let token
+  let tokenUser1
+  let tokenUser2
+
 
   beforeEach(async () => {
     await User.deleteMany({})
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
-    await user.save()
+    await Blog.deleteMany({})
 
-    const loginResponse = await api
+    const passwordHash1 = await bcrypt.hash('sekret', 10)
+    const user1 = new User({ username: 'root', passwordHash: passwordHash1 })
+    await user1.save()
+
+    const passwordHash2 = await bcrypt.hash('pass2', 10)
+    const user2 = new User({ username: 'other', passwordHash: passwordHash2 })
+    await user2.save()
+
+    const loginResponse1 = await api
       .post('/api/login')
       .send({ username: 'root', password: 'sekret' })
+    tokenUser1 = loginResponse1.body.token
 
-    token = loginResponse.body.token
+    const loginResponse2 = await api
+      .post('/api/login')
+      .send({ username: 'other', password: 'pass2' })
+    tokenUser2 = loginResponse2.body.token
 
-    await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+
+    const initialBlogs = helper.initialBlogs.map(
+      b => ({ ...b, user: user1._id })
+    )
+    await Blog.insertMany(initialBlogs)
   })
 
   test('blogs are returned as json', async () => {
@@ -68,6 +83,7 @@ describe('when there is initially some blogs saved', () => {
         .expect(200)
         .expect('Content-Type', /application\/json/);
 
+      blogToView.user = blogToView.user.toString()
       assert.deepStrictEqual(resultBlog.body, blogToView);
     });
 
@@ -94,7 +110,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${tokenUser1}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -115,7 +131,7 @@ describe('when there is initially some blogs saved', () => {
 
       const response = await api
         .post('/api/blogs')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${tokenUser1}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -131,7 +147,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${tokenUser1}`)
         .send(newBlog)
         .expect(400);
     });
@@ -144,7 +160,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${tokenUser1}`)
         .send(newBlog)
         .expect(400);
     });
@@ -162,7 +178,7 @@ describe('when there is initially some blogs saved', () => {
 
       const result = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${tokenUser1}`)
         .send(updatedBlog)
         .expect(200)
         .expect('Content-Type', /application\/json/)
@@ -186,27 +202,38 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .put(`/api/blogs/${nonExistingId}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${tokenUser1}`)
         .send(updatedBlog)
         .expect(404)
     })
   })
 
   describe('deletion of a blog', () => {
-    test('succeeds with status code 204 if id is valid', async () => {
+    test('succeeds with status code 204 if user is the creator', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
 
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${tokenUser1}`)
         .expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
-
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
       assert(!blogsAtEnd.some(b => b.id === blogToDelete.id))
-
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
     })
+  })
+  test('fails with status code 401 if user is not the creator', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${tokenUser2}`)
+      .expect(401)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
   })
 })
 

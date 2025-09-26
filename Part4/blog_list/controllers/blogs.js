@@ -3,6 +3,9 @@ const { response } = require('express')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { userExtractor } = require('../utils/middleware')
+
+
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -10,19 +13,9 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', userExtractor, async (request, response, next) => {
+  const user = request.user
   const body = request.body
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-
-  const user = await User.findById(decodedToken.id)
-
-  if (!user) {
-    return response.status(400).json({ error: 'userId missing or not valid' })
-  }
-
 
   const blog = new Blog({
     title: body.title,
@@ -51,7 +44,7 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 });
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
 
   try {
@@ -74,18 +67,23 @@ blogsRouter.put('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-  try {
-    const blog = await Blog.findByIdAndDelete(request.params.id);
-    if (blog) {
-      response.status(204).end();
-    } else {
-      response.status(404).json({ error: 'blog not found' });
-    }
-  } catch (error) {
-    response.status(400).json({ error: 'malformatted id' });
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+  const user = request.user
+  const blogId = request.params.id
+
+  const blog = await Blog.findById(blogId)
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
   }
-});
+
+  if (blog.user.toString() !== user._id.toString()) {
+    return response.status(401).json({ error: 'unauthorized action' })
+  }
+
+  await Blog.findByIdAndDelete(blogId)
+  response.status(204).end()
+})
+
 
 
 module.exports = blogsRouter

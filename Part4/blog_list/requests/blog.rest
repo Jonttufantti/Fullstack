@@ -1,3 +1,6 @@
+### Bearer token
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impvb25hIiwiaWQiOiI2OGQzZmQxNjRmYjI0OTQzNjYxNThkN2QiLCJpYXQiOjE3NTg4NzY4NzUsImV4cCI6MTc1ODg4MDQ3NX0.sBW-EzsFPq8ctuRF4N_ob8Ltbu09eRxkZ4iN4jV9kWI
+
 ### Get all blogs
 GET http://localhost:3001/api/blogs
 Accept: application/json
@@ -5,18 +8,20 @@ Accept: application/json
 ### Add a new blog
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "Testi",
   "author": "Joona",
   "url": "http://testi.com",
-  "likes": 1,
-  "userId": "68d3df8c6f1e54e7337ca013"
+  "likes": 1
 }
 
+
 ### Update blog
-PUT http://localhost:3001/api/blogs/68cc2fe77eac83e97cb2d7c6
+PUT http://localhost:3001/api/blogs/68d654e768e13fca67e37761
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "Test2",
@@ -24,3 +29,6 @@ Content-Type: application/json
   "url": "http://testi.com",
   "likes": 100
 }
+### Delete blog
+DELETE http://localhost:3001/api/blogs/68d654e768e13fca67e37761
+Authorization: Bearer {{token}}
