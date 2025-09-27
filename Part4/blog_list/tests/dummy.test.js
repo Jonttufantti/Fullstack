@@ -1,8 +1,8 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
-
-const allBlogs = require('./listOfBlogs')
 const listHelper = require('../utils/list_helper')
+const allBlogs = require('./listOfBlogs')
+
 
 test('dummy returns one', () => {
     const blogs = []
@@ -91,4 +91,33 @@ describe('most popular blogs if', () => {
         const result = listHelper.favoriteBlog(allBlogs)
         assert.deepStrictEqual(result, mostPopular)
     })
+})
+
+describe('Most blogs by author', () => {
+    test('author with most blogs is returned', () => {
+        const result = listHelper.mostBlogs(allBlogs);
+        assert.deepStrictEqual(result, { author: 'Robert C. Martin', blogs: 3 });
+    });
+
+    test('empty array returns null', () => {
+        const result = listHelper.mostBlogs([]);
+        assert.strictEqual(result, null);
+    });
+
+    test('undefined returns null', () => {
+        const result = listHelper.mostBlogs(undefined);
+        assert.strictEqual(result, null);
+    });
+});
+
+describe('mostLikes', () => {
+    test('returns the author with the most total likes', () => {
+        const result = listHelper.mostLikes(allBlogs);
+        assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', likes: 17 });
+    });
+
+    test('returns null for empty list', () => {
+        const result = listHelper.mostLikes([]);
+        assert.strictEqual(result, null);
+    });
 })
