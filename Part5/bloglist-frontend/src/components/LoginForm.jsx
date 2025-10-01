@@ -1,7 +1,7 @@
 import { useState } from "react"
 import loginService from '../services/login'
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = ({ onLogin, failedLogin }) => {
     const [errorMessage, setErrorMessage] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -18,6 +18,7 @@ const LoginForm = ({ onLogin }) => {
             setPassword('')
         } catch {
             setErrorMessage('wrong credentials')
+            failedLogin()
             setTimeout(() => {
                 setErrorMessage(null)
             }, 5000)

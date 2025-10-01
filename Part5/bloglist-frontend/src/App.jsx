@@ -3,10 +3,12 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Notification from './components/notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState({ text: null, type: null })
 
 
   useEffect(() => {
@@ -35,13 +37,28 @@ const App = () => {
 
   const handleLogin = (user) => {
     setUser(user)
+    setNotification({ text: `${user.username} has succsefully logged in`, type: 'success' })
+    setTimeout(() => {
+      setNotification({ text: null, type: null })
+    }, 5000)
     console.log("Logged in:", user)
+  }
+
+  const handleFail = () => {
+    setNotification({ text: `Wrong username or password`, type: 'error' })
+    setTimeout(() => {
+      setNotification({ text: null, type: null })
+    }, 5000)
   }
 
 
   return (
     <div>
-      {!user && <LoginForm onLogin={handleLogin} />}
+      {!user ? <h2>log in to the application</h2> : <h2>blogs</h2>}
+
+      <Notification notification={notification} />
+
+      {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
 
       {user && (
         <div>
@@ -55,7 +72,6 @@ const App = () => {
 
           <BlogForm onBlogCreated={(createdBlog) => setBlogs(blogs.concat(createdBlog))} />
 
-          <h2>blogs</h2>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
