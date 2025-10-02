@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
@@ -10,6 +10,8 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState({ text: null, type: null })
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -36,9 +38,14 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.create(blogObject)
       console.log('Created blog:', createdBlog)
       setBlogs(blogs.concat(createdBlog))
+      setNotification({ text: `Blog has successfully been created`, type: 'success' })
+      setTimeout(() => {
+        setNotification({ text: null, type: null })
+      }, 5000)
     } catch (error) {
       console.error('Error creating blog', error)
     }
@@ -47,7 +54,7 @@ const App = () => {
 
   const handleLogin = (user) => {
     setUser(user)
-    setNotification({ text: `${user.username} has succsefully logged in`, type: 'success' })
+    setNotification({ text: `${user.username} has successfully logged in`, type: 'success' })
     setTimeout(() => {
       setNotification({ text: null, type: null })
     }, 5000)
@@ -82,8 +89,9 @@ const App = () => {
           <button onClick={handleLogout}>
             logout
           </button>
-
-          <BlogForm onBlogCreated={addBlog} />
+          <Togglable buttonLabel='new blog' ref={blogFormRef}>
+            <BlogForm onBlogCreated={addBlog} />
+          </Togglable>
 
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
