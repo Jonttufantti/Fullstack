@@ -4,12 +4,12 @@ import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/notification'
+import Togglable from './components/Toggable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState({ text: null, type: null })
-
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -34,6 +34,16 @@ const App = () => {
     }
   }, [])
 
+  const addBlog = async (blogObject) => {
+    try {
+      const createdBlog = await blogService.create(blogObject)
+      console.log('Created blog:', createdBlog)
+      setBlogs(blogs.concat(createdBlog))
+    } catch (error) {
+      console.error('Error creating blog', error)
+    }
+  }
+
 
   const handleLogin = (user) => {
     setUser(user)
@@ -51,6 +61,11 @@ const App = () => {
     }, 5000)
   }
 
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogUser')
+    setUser(null)
+  }
+
 
   return (
     <div>
@@ -58,19 +73,17 @@ const App = () => {
 
       <Notification notification={notification} />
 
-      {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
-
+      <Togglable buttonLabel='login'>
+        {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
+      </Togglable>
       {user && (
         <div>
           <p>{user.name} logged in</p>
-          <button onClick={() => {
-            window.localStorage.removeItem('loggedBlogUser')
-            setUser(null)
-          }}>
+          <button onClick={handleLogout}>
             logout
           </button>
 
-          <BlogForm onBlogCreated={(createdBlog) => setBlogs(blogs.concat(createdBlog))} />
+          <BlogForm onBlogCreated={addBlog} />
 
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
