@@ -60,8 +60,7 @@ const App = () => {
       setBlogs(blogs.map(blog =>
         blog.id === updatedBlog.id ? updatedBlog : blog
       ))
-      console.log('Updated blog')
-      setNotification({ text: `You liked a blog ${blogObject.title}`, type: 'success' })
+      setNotification({ text: `You liked a blog ${updatedBlog.title}`, type: 'success' })
       setTimeout(() => {
         setNotification({ text: null, type: null })
       }, 5000)
@@ -73,7 +72,7 @@ const App = () => {
       console.error(error)
     }
   }
-  
+
     const handleLogin = (user) => {
       setUser(user)
       setNotification({ text: `${user.username} has successfully logged in`, type: 'success' })

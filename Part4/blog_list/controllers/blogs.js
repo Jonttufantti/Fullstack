@@ -56,9 +56,10 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
       blog.url = url
       blog.likes = likes
 
-      return blog.save().then((updatedBlog) => {
-        response.json(updatedBlog)
-      })
+      const updatedBlog = await blog.save()
+      await updatedBlog.populate('user', { username: 1, name :1 })
+
+      return response.json(updatedBlog)
     }
 
     response.status(404).end();
