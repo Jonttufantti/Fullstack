@@ -41,7 +41,9 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.create(blogObject)
       console.log('Created blog:', createdBlog)
-      setBlogs(blogs.concat(createdBlog))
+      setBlogs(prevBlogs =>
+        [...prevBlogs, createdBlog].sort((a, b) => b.likes - a.likes)
+      )
       setNotification({ text: `Blog has successfully been created`, type: 'success' })
       setTimeout(() => {
         setNotification({ text: null, type: null })
@@ -57,9 +59,11 @@ const App = () => {
         ...blogObject,
         likes: blogObject.likes + 1
       })
-      setBlogs(blogs.map(blog =>
-        blog.id === updatedBlog.id ? updatedBlog : blog
-      ))
+      setBlogs(prevBlogs =>
+        prevBlogs
+          .map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
+          .sort((a, b) => b.likes - a.likes)
+      )
       setNotification({ text: `You liked a blog ${updatedBlog.title}`, type: 'success' })
       setTimeout(() => {
         setNotification({ text: null, type: null })
@@ -73,54 +77,54 @@ const App = () => {
     }
   }
 
-    const handleLogin = (user) => {
-      setUser(user)
-      setNotification({ text: `${user.username} has successfully logged in`, type: 'success' })
-      setTimeout(() => {
-        setNotification({ text: null, type: null })
-      }, 5000)
-      console.log("Logged in:", user)
-    }
-
-    const handleFail = () => {
-      setNotification({ text: `Wrong username or password`, type: 'error' })
-      setTimeout(() => {
-        setNotification({ text: null, type: null })
-      }, 5000)
-    }
-
-    const handleLogout = () => {
-      window.localStorage.removeItem('loggedBlogUser')
-      setUser(null)
-    }
-
-
-    return (
-      <div>
-        {!user ? <h2>log in to the application</h2> : <h2>blogs</h2>}
-
-        <Notification notification={notification} />
-
-        <Togglable buttonLabel='login'>
-          {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
-        </Togglable>
-        {user && (
-          <div>
-            <p>{user.name} logged in</p>
-            <button onClick={handleLogout}>
-              logout
-            </button>
-            <Togglable buttonLabel='new blog' ref={blogFormRef}>
-              <BlogForm onBlogCreated={addBlog} />
-            </Togglable>
-
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
-            )}
-          </div>
-        )}
-      </div>
-    )
+  const handleLogin = (user) => {
+    setUser(user)
+    setNotification({ text: `${user.username} has successfully logged in`, type: 'success' })
+    setTimeout(() => {
+      setNotification({ text: null, type: null })
+    }, 5000)
+    console.log("Logged in:", user)
   }
 
-  export default App
+  const handleFail = () => {
+    setNotification({ text: `Wrong username or password`, type: 'error' })
+    setTimeout(() => {
+      setNotification({ text: null, type: null })
+    }, 5000)
+  }
+
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogUser')
+    setUser(null)
+  }
+
+
+  return (
+    <div>
+      {!user ? <h2>log in to the application</h2> : <h2>blogs</h2>}
+
+      <Notification notification={notification} />
+
+      <Togglable buttonLabel='login'>
+        {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
+      </Togglable>
+      {user && (
+        <div>
+          <p>{user.name} logged in</p>
+          <button onClick={handleLogout}>
+            logout
+          </button>
+          <Togglable buttonLabel='new blog' ref={blogFormRef}>
+            <BlogForm onBlogCreated={addBlog} />
+          </Togglable>
+
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default App
