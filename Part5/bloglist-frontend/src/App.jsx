@@ -77,6 +77,27 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (blogObject) => {
+    try {
+      await blogService.remove(blogObject.id)
+      setBlogs(prevBlogs =>
+        prevBlogs
+          .filter(blog => blog.id !== blogObject.id)
+          .sort((a, b) => b.likes - a.likes)
+      )
+      setNotification({ text: `You removed a blog ${blogObject.title}`, type: 'success' })
+      setTimeout(() => {
+        setNotification({ text: null, type: null })
+      }, 5000)
+    } catch (error) {
+      setNotification({ text: 'Encountered an error while removing the blog', type: 'error' })
+      setTimeout(() => {
+        setNotification({ text: null, type: null })
+      }, 5000)
+      console.error(error)
+    }
+  }
+
   const handleLogin = (user) => {
     setUser(user)
     setNotification({ text: `${user.username} has successfully logged in`, type: 'success' })
@@ -119,7 +140,7 @@ const App = () => {
           </Togglable>
 
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+            <Blog key={blog.id} blog={blog} likeBlog={likeBlog} deleteBlog={deleteBlog} />
           )}
         </div>
       )}
