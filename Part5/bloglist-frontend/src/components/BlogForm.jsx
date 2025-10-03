@@ -4,7 +4,7 @@ const BlogForm = ({ onBlogCreated }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
 
-    const handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault()
     onBlogCreated(newBlog)
     setNewBlog({ title: '', author: '', url: '' })

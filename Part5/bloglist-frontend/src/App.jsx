@@ -44,7 +44,7 @@ const App = () => {
       setBlogs(prevBlogs =>
         [...prevBlogs, createdBlog].sort((a, b) => b.likes - a.likes)
       )
-      setNotification({ text: `Blog has successfully been created`, type: 'success' })
+      setNotification({ text: 'Blog has successfully been created', type: 'success' })
       setTimeout(() => {
         setNotification({ text: null, type: null })
       }, 5000)
@@ -104,11 +104,11 @@ const App = () => {
     setTimeout(() => {
       setNotification({ text: null, type: null })
     }, 5000)
-    console.log("Logged in:", user)
+    console.log('Logged in:', user)
   }
 
   const handleFail = () => {
-    setNotification({ text: `Wrong username or password`, type: 'error' })
+    setNotification({ text: 'Wrong username or password', type: 'error' })
     setTimeout(() => {
       setNotification({ text: null, type: null })
     }, 5000)
