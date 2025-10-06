@@ -79,4 +79,28 @@ describe('Blog app', () => {
 
         })
     })
+
+    test('only the creator can see the delete button', async ({ page, request }) => {
+        await request.post('/api/users', {
+            data: {
+                name: 'juuna',
+                username: 'juuna',
+                password: 'salainensuper'
+            }
+        })
+
+        await loginWith(page, 'joona', 'supersalainen')
+        await createBlog(page, 'blog created by joona')
+
+        await page.getByRole('button', { name: 'logout' }).click()
+
+        await loginWith(page, 'juuna', 'salainensuper')
+
+        const blog = page.getByTestId('blog-container').filter({ hasText: 'blog created by joona' })
+        await blog.getByRole('button', { name: 'view' }).click()
+
+        const removeButton = blog.getByTestId('remove-button')
+        await expect(removeButton).toHaveCount(0)
+    })
+
 })
