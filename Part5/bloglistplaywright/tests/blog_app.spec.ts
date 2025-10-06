@@ -44,9 +44,37 @@ describe('Blog app', () => {
             await expect(page.getByText('a blog created by playwright')).toBeVisible()
         })
 
-        describe('and a note exists', () => {
+        describe('and a blog exists', () => {
             beforeEach(async ({ page }) => {
                 await createBlog(page, 'another blog by playwright')
+            })
+
+            test('it can be liked', async ({ page }) => {
+                const blog = page.getByText('another blog by playwright').locator('..')
+                await blog.getByRole('button', { name: 'view' }).click()
+
+                const likes = blog.getByTestId('likes-count')
+                const likeButton = blog.getByTestId('like-button')
+
+                const initialLikes = parseInt(await likes.textContent())
+
+                await likeButton.click()
+
+                await expect(likes).toHaveText((initialLikes + 1).toString())
+            })
+
+            test('remove button is visible and blog can be removed', async ({ page }) => {
+                const blog = page.getByTestId('blog-container').filter({ hasText: 'another blog by playwright' })
+
+                await blog.getByRole('button', { name: 'view' }).click()
+
+                const removeButton = blog.getByTestId('remove-button')
+                await expect(removeButton).toBeVisible()
+
+                page.on('dialog', dialog => dialog.accept())
+                await removeButton.click()
+
+                await expect(blog).toHaveCount(0)
             })
 
         })
