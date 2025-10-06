@@ -41,9 +41,11 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.create(blogObject)
       console.log('Created blog:', createdBlog)
+
       setBlogs(prevBlogs =>
-        [...prevBlogs, createdBlog].sort((a, b) => b.likes - a.likes)
+        [...prevBlogs, { ...createdBlog, user }].sort((a, b) => b.likes - a.likes)
       )
+
       setNotification({ text: 'Blog has successfully been created', type: 'success' })
       setTimeout(() => {
         setNotification({ text: null, type: null })
@@ -100,6 +102,10 @@ const App = () => {
 
   const handleLogin = (user) => {
     setUser(user)
+
+    blogService.setToken(user.token)
+    window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+
     setNotification({ text: `${user.username} has successfully logged in`, type: 'success' })
     setTimeout(() => {
       setNotification({ text: null, type: null })
