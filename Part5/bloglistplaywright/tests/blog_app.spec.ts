@@ -103,4 +103,37 @@ describe('Blog app', () => {
         await expect(removeButton).toHaveCount(0)
     })
 
+    test('blogs are ordered by likes, most likes first', async ({ page }) => {
+        await loginWith(page, 'joona', 'supersalainen')
+
+        await createBlog(page, 'Least liked blog')
+        await createBlog(page, 'Most liked blog')
+        await createBlog(page, 'Medium liked blog')
+
+        const likeBlog = async (title: string, times: number) => {
+            const blog = page.getByTestId('blog-container').filter({ hasText: title })
+            await blog.getByRole('button', { name: 'view' }).click()
+            const likeButton = blog.getByTestId('like-button')
+            for (let i = 0; i < times; i++) {
+                await likeButton.click()
+                await page.waitForTimeout(100)
+            }
+        }
+
+        await likeBlog('Most liked blog', 5)
+        await likeBlog('Medium liked blog', 3)
+        await likeBlog('Least liked blog', 1)
+
+        const blogs = await page.getByTestId('blog-container').all()
+
+        const likesTexts = await Promise.all(
+            blogs.map(blog => blog.getByTestId('likes-count').textContent())
+        )
+        const likes = likesTexts.map(text => parseInt(text!))
+
+        for (let i = 0; i < likes.length - 1; i++) {
+            expect(likes[i]).toBeGreaterThanOrEqual(likes[i + 1])
+        }
+    })
+
 })
