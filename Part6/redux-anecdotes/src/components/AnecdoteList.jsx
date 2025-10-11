@@ -8,9 +8,9 @@ const AnecdoteList = () => {
   const anecdotes = useSelector(state => state.anecdotes)
   const filter = useSelector(state => state.filter)
 
-  const handleVote = (id, content) => {
-    dispatch(voteAnecdote(id))
-    dispatch(showNotificationFor(`You voted for "${content}"`, 5))
+  const handleVote = (anecdote) => {
+    dispatch(voteAnecdote(anecdote))
+    dispatch(showNotificationFor(`You voted for "${anecdote.content}"`, 5))
   }
 
   const filteredAnecdotes = [...anecdotes]
@@ -26,7 +26,7 @@ const AnecdoteList = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote.id, anecdote.content)}>vote</button>
+            <button onClick={() => handleVote( anecdote)}>vote</button>
           </div>
         </div>
       )}
