@@ -6,28 +6,20 @@ import BlogForm from './components/BlogForm'
 import Notification from './components/notification'
 import Togglable from './components/Toggable'
 import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs, createBlog } from './reducers/blogReducer'
 import { showNotificationFor } from './reducers/notificationReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => state.blogs)
+  const notification = useSelector(state => state.notifications)
   const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
   const dispatch = useDispatch()
-  const notification = useSelector(state => state.notifications)
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const initialBlogs = await blogService.getAll()
-        setBlogs(initialBlogs)
-      } catch (error) {
-        console.error('Failed to fetch blogs:', error)
-      }
-    }
-
-    fetchBlogs()
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
@@ -41,16 +33,10 @@ const App = () => {
   const addBlog = async blogObject => {
     try {
       blogFormRef.current.toggleVisibility()
-      const createdBlog = await blogService.create(blogObject)
-      console.log('Created blog:', createdBlog)
-
-      setBlogs(prevBlogs =>
-        [...prevBlogs, { ...createdBlog, user }].sort((a, b) => b.likes - a.likes)
-      )
-
+      await dispatch(createBlog(blogObject))
       dispatch(showNotificationFor('Blog has successfully been created', 'success'))
     } catch (error) {
-      console.error('Error creating blog', error)
+      dispatch(showNotificationFor('Error creating blog', 'error'))
     }
   }
 
@@ -121,13 +107,7 @@ const App = () => {
           </Togglable>
 
           {blogs.map(blog => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              handleLike={likeBlog}
-              handleRemove={deleteBlog}
-              user={user}
-            />
+            <Blog key={blog.id} blog={blog} />
           ))}
         </div>
       )}
