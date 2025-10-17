@@ -1,0 +1,26 @@
+### Get all users
+GET http://localhost:3001/api/users
+Accept: application/json
+
+### Create new user
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "juuna",
+    "name": "juuna",
+    "password": "salainensuper"
+}
+
+### Create another user
+
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "joona",
+    "name": "joona",
+    "password": "supersalainen"
+}
+
+
