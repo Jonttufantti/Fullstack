@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog, handleLike, handleRemove, user }) => {
   const [visible, setVisible] = useState(false)
@@ -12,9 +13,15 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
   }
 
   return (
-    <div className="blog" data-testid="blog-container" style={{ paddingTop: 10, paddingLeft: 2, border: 1, marginBottom: 5 }}>
+    <div
+      className="blog"
+      data-testid="blog-container"
+      style={{ paddingTop: 10, paddingLeft: 2, border: 1, marginBottom: 5 }}
+    >
       <div>
-        {blog.title} {blog.author}
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>
         <button onClick={toggleVisibility}>{visible ? 'Hide' : 'View'}</button>
       </div>
 
@@ -23,11 +30,15 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
           <div>{blog.url}</div>
           <div>
             likes <span data-testid="likes-count">{blog.likes}</span>{' '}
-            <button data-testid="like-button" onClick={() => handleLike(blog)}>like</button>
+            <button data-testid="like-button" onClick={() => handleLike(blog)}>
+              like
+            </button>
           </div>
           <div>{blog.user.name}</div>
           {user.username === blog.user.username && (
-            <button data-testid="remove-button" onClick={removeBlog}>Remove</button>
+            <button data-testid="remove-button" onClick={removeBlog}>
+              Remove
+            </button>
           )}
         </div>
       )}

@@ -9,6 +9,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 import { showNotificationFor } from './reducers/notificationReducer'
 import { setUser, clearUser } from './reducers/userReducer'
+import { Routes, Route, Link, useParams, useNavigate, useMatch } from 'react-router-dom'
+import UsersView from './views/UsersView'
+import UserDetailsView from './views/UserDetailsView'
+import BlogsView from './views/BlogsView'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -17,6 +21,10 @@ const App = () => {
 
   const blogFormRef = useRef()
   const dispatch = useDispatch()
+
+  const padding = {
+    padding: 5
+  }
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -75,32 +83,107 @@ const App = () => {
     dispatch(clearUser())
   }
 
-  return (
+  const match = useMatch('/blogs/:id')
+  const blog = match ? blogs.find(blog => blog.id === match.params.id) : null
+
+  const Home = () => (
     <div>
-      {!user ? <h2>log in to the application</h2> : <h2>blogs</h2>}
+      <p>
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+        been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+        galley of type and scrambled it to make a type specimen book. It has survived not only five
+        centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+        passages, and more recently with desktop publishing software like Aldus PageMaker including
+        versions of Lorem Ipsum.
+      </p>
+    </div>
+  )
 
-      <Notification notification={notification} />
+  const BlogView = ({ blog }) => {
+    if (!blog) return null
+    return (
+      <div>
+        <h2>{blog.title}</h2>
+        <div>{blog.author}</div>
+        <div>{blog.url}</div>
+        <div>{blog.likes} likes</div>
+      </div>
+    )
+  }
 
-      <Togglable buttonLabel="login">
-        {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
+  const Blogs = ({ blogs }) => (
+    <div>
+      <h2>Blogs</h2>
+
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm onBlogCreated={addBlog} />
       </Togglable>
-      {user && (
-        <div>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm onBlogCreated={addBlog} />
-          </Togglable>
 
-          {blogs.map(blog => (
+      <ul>
+        {blogs.map(blog => (
+          <li key={blog.id}>
             <Blog
-              key={blog.id}
               blog={blog}
               handleLike={() => handleLike(blog)}
               handleRemove={() => handleDelete(blog)}
               user={user}
             />
-          ))}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+
+  return (
+    <div>
+      {!user ? (
+        <div>
+          <h2>log in to the application</h2>
+          <Togglable buttonLabel="login">
+            {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
+          </Togglable>
+        </div>
+      ) : (
+        <div>
+          <h2>Blog list application</h2>
+          <Notification notification={notification} />
+          {user && (
+            <div>
+              <p>{user.name} logged in</p>
+              <button onClick={handleLogout}>logout</button>
+            </div>
+          )}
+
+          <Link style={padding} to="/">
+            home
+          </Link>
+          <Link style={padding} to="/blogs">
+            blogs
+          </Link>
+          <Link style={padding} to="/users">
+            users
+          </Link>
+
+          <Routes>
+            <Route path="/blogs/:id" element={<BlogView blog={blog} />} />
+            <Route
+              path="/blogs"
+              element={
+                <BlogsView
+                  blogs={blogs}
+                  addBlog={addBlog}
+                  handleLike={handleLike}
+                  handleDelete={handleDelete}
+                  user={user}
+                  blogFormRef={blogFormRef}
+                />
+              }
+            />
+            <Route path="/users" element={<UsersView blogs={blogs} />} />
+            <Route path="/users/:id" element={<UserDetailsView blogs={blogs} />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
         </div>
       )}
     </div>
