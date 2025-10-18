@@ -112,29 +112,6 @@ const App = () => {
     )
   }
 
-  const Blogs = ({ blogs }) => (
-    <div>
-      <h2>Blogs</h2>
-
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm onBlogCreated={addBlog} />
-      </Togglable>
-
-      <ul>
-        {blogs.map(blog => (
-          <li key={blog.id}>
-            <Blog
-              blog={blog}
-              handleLike={() => handleLike(blog)}
-              handleRemove={() => handleDelete(blog)}
-              user={user}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-
   return (
     <div>
       {!user ? (
