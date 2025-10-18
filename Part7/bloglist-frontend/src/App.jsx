@@ -13,6 +13,7 @@ import { Routes, Route, Link, useParams, useNavigate, useMatch } from 'react-rou
 import UsersView from './views/UsersView'
 import UserDetailsView from './views/UserDetailsView'
 import BlogsView from './views/BlogsView'
+import BlogView from './views/BlogView'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -99,18 +100,6 @@ const App = () => {
       </p>
     </div>
   )
-
-  const BlogView = ({ blog }) => {
-    if (!blog) return null
-    return (
-      <div>
-        <h2>{blog.title}</h2>
-        <div>{blog.author}</div>
-        <div>{blog.url}</div>
-        <div>{blog.likes} likes</div>
-      </div>
-    )
-  }
 
   return (
     <div>

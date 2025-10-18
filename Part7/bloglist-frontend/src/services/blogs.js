@@ -13,6 +13,7 @@ const getAll = async () => {
 }
 
 const create = async newObject => {
+  console.log('CREATE BASEURL', baseUrl)
   const config = {
     headers: { Authorization: token }
   }
@@ -28,7 +29,7 @@ const update = async (id, newObject) => {
   return response.data
 }
 
-const remove = async (id) => {
+const remove = async id => {
   const config = {
     headers: { Authorization: token }
   }
@@ -41,5 +42,18 @@ const remove = async (id) => {
   }
 }
 
+const addComment = async (id, comment) => {
+  console.log('COMMENT BASEURL', baseUrl)
+  const config = {
+    headers: { Authorization: token }
+  }
+  try {
+    const response = await axios.post(`${baseUrl}/${id}/comments`, { comment }, config)
+    return response.data
+  } catch (error) {
+    console.error('Error adding comment:', error)
+    throw error
+  }
+}
 
-export default { getAll, create, update, setToken, remove }
+export default { getAll, create, update, setToken, remove, addComment }
