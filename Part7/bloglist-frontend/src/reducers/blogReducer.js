@@ -31,11 +31,20 @@ export const initializeBlogs = () => {
   }
 }
 
-export const createBlog = blogObject => {
-  return async dispatch => {
-    const newBlog = await blogService.create(blogObject)
-    dispatch(appendBlog(newBlog))
-  }
+export const createBlog = blogObject => async (dispatch, getState) => {
+  const newBlog = await blogService.create(blogObject)
+  const loggedUser = getState().user
+
+  dispatch(
+    appendBlog({
+      ...newBlog,
+      user: {
+        username: loggedUser.username,
+        name: loggedUser.name,
+        id: loggedUser.id
+      }
+    })
+  )
 }
 
 export const likeBlog = blog => {

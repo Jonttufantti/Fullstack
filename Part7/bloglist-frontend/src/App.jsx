@@ -8,11 +8,12 @@ import Togglable from './components/Toggable'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 import { showNotificationFor } from './reducers/notificationReducer'
+import { setUser, clearUser } from './reducers/userReducer'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const notification = useSelector(state => state.notifications)
-  const [user, setUser] = useState(null)
+  const user = useSelector(state => state.user)
 
   const blogFormRef = useRef()
   const dispatch = useDispatch()
@@ -25,10 +26,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [dispatch])
 
   const addBlog = async blogObject => {
     try {
@@ -59,12 +60,10 @@ const App = () => {
   }
 
   const handleLogin = user => {
-    setUser(user)
-
+    dispatch(setUser(user))
     blogService.setToken(user.token)
     window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
     dispatch(showNotificationFor(`${user.username} has successfully logged in`, 'success'))
-    console.log('Logged in:', user)
   }
 
   const handleFail = () => {
@@ -73,7 +72,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogUser')
-    setUser(null)
+    dispatch(clearUser())
   }
 
   return (
