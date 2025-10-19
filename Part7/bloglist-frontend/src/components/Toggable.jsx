@@ -1,30 +1,33 @@
-import { useState, useImperativeHandle } from 'react'
+import { useState, useImperativeHandle, forwardRef } from 'react'
+import { Button, Collapse, Box, Paper } from '@mui/material'
 
-const Togglable = (props) => {
+const Togglable = forwardRef(({ buttonLabel, children }, ref) => {
   const [visible, setVisible] = useState(false)
 
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
+  const toggleVisibility = () => setVisible(prev => !prev)
 
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
-
-  useImperativeHandle(props.ref, () => {
-    return { toggleVisibility }
-  })
+  useImperativeHandle(ref, () => ({ toggleVisibility }))
 
   return (
-    <div>
-      <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
-      </div>
-      <div style={showWhenVisible}>
-        {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
-      </div>
-    </div>
+    <Box>
+      {!visible && (
+        <Button variant="contained" color="primary" onClick={toggleVisibility} sx={{ mb: 2 }}>
+          {buttonLabel}
+        </Button>
+      )}
+
+      <Collapse in={visible}>
+        <Paper sx={{ p: 2, mb: 2, borderRadius: 2, boxShadow: 1 }}>
+          {children}
+          <Box mt={2}>
+            <Button variant="outlined" color="secondary" onClick={toggleVisibility}>
+              Cancel
+            </Button>
+          </Box>
+        </Paper>
+      </Collapse>
+    </Box>
   )
-}
+})
 
 export default Togglable

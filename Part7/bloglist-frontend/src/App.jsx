@@ -14,6 +14,7 @@ import UsersView from './views/UsersView'
 import UserDetailsView from './views/UserDetailsView'
 import BlogsView from './views/BlogsView'
 import BlogView from './views/BlogView'
+import { AppBar, Toolbar, Typography, Button, Container, Box, Link as MUILink } from '@mui/material'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -22,6 +23,8 @@ const App = () => {
 
   const blogFormRef = useRef()
   const dispatch = useDispatch()
+
+  console.log('Notification APP', notification)
 
   const padding = {
     padding: 5
@@ -71,11 +74,12 @@ const App = () => {
   const handleLogin = user => {
     dispatch(setUser(user))
     blogService.setToken(user.token)
-    window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+    window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
     dispatch(showNotificationFor(`${user.username} has successfully logged in`, 'success'))
   }
 
   const handleFail = () => {
+    console.log('Login failed')
     dispatch(showNotificationFor('Wrong username or password', 'error'))
   }
 
@@ -102,57 +106,66 @@ const App = () => {
   )
 
   return (
-    <div>
+    <Container>
+      <Notification notification={notification} />
       {!user ? (
-        <div>
-          <h2>log in to the application</h2>
+        <>
+          <Typography variant="h4" gutterBottom>
+            Log in to the application
+          </Typography>
           <Togglable buttonLabel="login">
             {!user && <LoginForm onLogin={handleLogin} failedLogin={handleFail} />}
           </Togglable>
-        </div>
+        </>
       ) : (
-        <div>
-          <h2>Blog list application</h2>
-          <Notification notification={notification} />
-          {user && (
-            <div>
-              <p>{user.name} logged in</p>
-              <button onClick={handleLogout}>logout</button>
-            </div>
-          )}
+        <>
+          <AppBar position="static">
+            <Toolbar>
+              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                Blog list
+              </Typography>
 
-          <Link style={padding} to="/">
-            home
-          </Link>
-          <Link style={padding} to="/blogs">
-            blogs
-          </Link>
-          <Link style={padding} to="/users">
-            users
-          </Link>
+              <MUILink component={Link} to="/" color="inherit" sx={{ mx: 1 }}>
+                Home
+              </MUILink>
+              <MUILink component={Link} to="/blogs" color="inherit" sx={{ mx: 1 }}>
+                Blogs
+              </MUILink>
+              <MUILink component={Link} to="/users" color="inherit" sx={{ mx: 1 }}>
+                Users
+              </MUILink>
 
-          <Routes>
-            <Route path="/blogs/:id" element={<BlogView blog={blog} />} />
-            <Route
-              path="/blogs"
-              element={
-                <BlogsView
-                  blogs={blogs}
-                  addBlog={addBlog}
-                  handleLike={handleLike}
-                  handleDelete={handleDelete}
-                  user={user}
-                  blogFormRef={blogFormRef}
-                />
-              }
-            />
-            <Route path="/users" element={<UsersView blogs={blogs} />} />
-            <Route path="/users/:id" element={<UserDetailsView blogs={blogs} />} />
-            <Route path="/" element={<Home />} />
-          </Routes>
-        </div>
+              <Typography sx={{ mx: 2 }}>{user.name}</Typography>
+              <Button color="inherit" onClick={handleLogout}>
+                Logout
+              </Button>
+            </Toolbar>
+          </AppBar>
+
+          <Box mt={2}>
+            <Routes>
+              <Route path="/blogs/:id" element={<BlogView blog={blog} />} />
+              <Route
+                path="/blogs"
+                element={
+                  <BlogsView
+                    blogs={blogs}
+                    addBlog={addBlog}
+                    handleLike={handleLike}
+                    handleDelete={handleDelete}
+                    user={user}
+                    blogFormRef={blogFormRef}
+                  />
+                }
+              />
+              <Route path="/users" element={<UsersView blogs={blogs} />} />
+              <Route path="/users/:id" element={<UserDetailsView blogs={blogs} />} />
+              <Route path="/" element={<Home />} />
+            </Routes>
+          </Box>
+        </>
       )}
-    </div>
+    </Container>
   )
 }
 

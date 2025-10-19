@@ -2,14 +2,11 @@ import { useState } from 'react'
 import loginService from '../services/login'
 
 const LoginForm = ({ onLogin, failedLogin }) => {
-  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-
   const handleLogin = async event => {
     event.preventDefault()
-
     try {
       const user = await loginService.login({ username, password })
       onLogin(user)
@@ -17,11 +14,7 @@ const LoginForm = ({ onLogin, failedLogin }) => {
       setUsername('')
       setPassword('')
     } catch {
-      setErrorMessage('wrong credentials')
       failedLogin()
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
     }
   }
 
@@ -31,7 +24,7 @@ const LoginForm = ({ onLogin, failedLogin }) => {
       <form onSubmit={handleLogin}>
         <div>
           <label>
-                        username
+            username
             <input
               type="text"
               value={username}
@@ -41,7 +34,7 @@ const LoginForm = ({ onLogin, failedLogin }) => {
         </div>
         <div>
           <label>
-                        password
+            password
             <input
               type="password"
               value={password}
@@ -53,8 +46,6 @@ const LoginForm = ({ onLogin, failedLogin }) => {
       </form>
     </div>
   )
-
-
 }
 
 export default LoginForm

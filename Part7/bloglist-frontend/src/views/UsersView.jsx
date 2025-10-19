@@ -1,9 +1,18 @@
 import { Link } from 'react-router-dom'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Box
+} from '@mui/material'
 
 const UsersView = ({ blogs }) => {
-  // Group blogs by user
   const usersMap = new Map()
-
   blogs.forEach(blog => {
     if (blog.user) {
       const userId = blog.user.id
@@ -13,31 +22,39 @@ const UsersView = ({ blogs }) => {
       usersMap.get(userId).blogs.push(blog)
     }
   })
-
   const users = Array.from(usersMap.values())
 
   return (
-    <div>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Box sx={{ my: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Users
+      </Typography>
+      <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>User</TableCell>
+              <TableCell>Blogs created</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <Link
+                    to={`/users/${user.id}`}
+                    style={{ textDecoration: 'none', color: '#1976d2' }}
+                  >
+                    {user.name}
+                  </Link>
+                </TableCell>
+                <TableCell>{user.blogs.length}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   )
 }
 
