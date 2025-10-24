@@ -5,6 +5,7 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import { ALL_AUTHORS } from "./queries";
 import { ALL_BOOKS } from "./queries";
+import AuthorForm from "./components/AuthorForm";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -31,6 +32,7 @@ const App = () => {
         show={page === "authors"}
         authors={resultAuthors.data?.allAuthors || []}
       />
+      <AuthorForm show={page === "authors"} />
 
       <Books show={page === "books"} books={resultBooks.data?.allBooks || []} />
 
