@@ -146,24 +146,47 @@ type Mutation {
 
 const resolvers = {
   Query: {
-    allBooks: async () => Book.find({}).populate("author"),
+    allBooks: async (root, args) => {
+      let filter = {};
+      if (args.genre) {
+        filter.genres = { $in: [args.genre] };
+      }
+
+      return Book.find(filter).populate("author");
+    },
     allAuthors: async () => Author.find({}),
   },
+
+  Author: {
+    bookCount: async (root) => {
+      return Book.countDocuments({ author: root._id });
+    },
+  },
+
   Mutation: {
     addBook: async (root, args) => {
       let author = await Author.findOne({ name: args.author });
+
       if (!author) {
         author = new Author({ name: args.author });
         await author.save();
       }
 
-      const book = new Book({ ...args, author: author._id });
+      const book = new Book({
+        title: args.title,
+        published: args.published,
+        author: author._id,
+        genres: args.genres,
+      });
+
       await book.save();
       return book.populate("author");
     },
+
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name });
       if (!author) return null;
+
       author.born = args.setBornTo;
       await author.save();
       return author;
