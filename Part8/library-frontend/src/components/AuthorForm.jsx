@@ -1,31 +1,37 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Select from "react-select";
 import { useMutation } from "@apollo/client/react";
-
 import { EDIT_AUTHOR, ALL_AUTHORS } from "../queries";
+import { useQuery } from "@apollo/client/react";
 
-const AuthorForm = ({ setError }) => {
-  const [name, setName] = useState("");
+const AuthorForm = () => {
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [birthyear, setBirthyear] = useState("");
 
-  const [changeBirthyear, result] = useMutation(EDIT_AUTHOR, {
+  const result = useQuery(ALL_AUTHORS);
+  const [changeBirthyear] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
   });
 
+  const options = result.data.allAuthors.map((a) => ({
+    value: a.name,
+    label: a.name,
+  }));
+
   const submit = async (event) => {
     event.preventDefault();
-    const cleanedName = name.trim();
-    console.log({ name, setBornTo: Number(birthyear) });
+    if (!selectedAuthor) return;
 
     try {
       const result = await changeBirthyear({
-        variables: { name: cleanedName, setBornTo: Number(birthyear) },
+        variables: { name: selectedAuthor.value, setBornTo: Number(birthyear) },
       });
       console.log("mutation result:", result);
     } catch (error) {
       console.error("GraphQL error:", error);
     }
 
-    setName("");
+    setSelectedAuthor(null);
     setBirthyear("");
   };
 
@@ -36,9 +42,11 @@ const AuthorForm = ({ setError }) => {
       <form onSubmit={submit}>
         <div>
           name{" "}
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
+          <Select
+            value={selectedAuthor}
+            onChange={setSelectedAuthor}
+            options={options}
+            placeholder="Select author..."
           />
         </div>
         <div>
