@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client/react";
 import { ALL_BOOKS } from "../queries";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Books = ({ show }) => {
   const [selectedGenre, setSelectedGenre] = useState(null);
@@ -15,6 +15,12 @@ const Books = ({ show }) => {
     variables: { genre: selectedGenre },
     skip: !show,
   });
+
+  useEffect(() => {
+    if (show) {
+      refetch({ genre: selectedGenre });
+    }
+  }, [selectedGenre, show, refetch]);
 
   if (!show) return null;
   if (loadingAllBooks || loadingFilteredBooks) return <div>loading...</div>;
