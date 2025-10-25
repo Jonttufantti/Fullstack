@@ -4,6 +4,7 @@ const { startStandaloneServer } = require("@apollo/server/standalone");
 require("dotenv").config();
 const mongoose = require("mongoose");
 
+const { GraphQLError } = require("graphql");
 const Author = require("./models/authors");
 const Book = require("./models/books");
 
@@ -165,31 +166,51 @@ const resolvers = {
 
   Mutation: {
     addBook: async (root, args) => {
-      let author = await Author.findOne({ name: args.author });
+      try {
+        let author = await Author.findOne({ name: args.author });
 
-      if (!author) {
-        author = new Author({ name: args.author });
-        await author.save();
+        if (!author) {
+          author = new Author({ name: args.author });
+          await author.save();
+        }
+
+        const book = new Book({
+          title: args.title,
+          published: args.published,
+          author: author._id,
+          genres: args.genres,
+        });
+
+        await book.save();
+        return book.populate("author");
+      } catch (error) {
+        throw new GraphQLError("Adding book failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args,
+            error,
+          },
+        });
       }
-
-      const book = new Book({
-        title: args.title,
-        published: args.published,
-        author: author._id,
-        genres: args.genres,
-      });
-
-      await book.save();
-      return book.populate("author");
     },
 
     editAuthor: async (root, args) => {
-      const author = await Author.findOne({ name: args.name });
-      if (!author) return null;
+      try {
+        const author = await Author.findOne({ name: args.name });
+        if (!author) return null;
 
-      author.born = args.setBornTo;
-      await author.save();
-      return author;
+        author.born = args.setBornTo;
+        await author.save();
+        return author;
+      } catch (error) {
+        throw new GraphQLError("Editing author failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args,
+            error,
+          },
+        });
+      }
     },
   },
 };
