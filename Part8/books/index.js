@@ -10,6 +10,7 @@ const cors = require("cors");
 const http = require("http");
 const { WebSocketServer } = require("ws");
 const { useServer } = require("graphql-ws/use/ws");
+const { createLoaders } = require("./dataloader");
 
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -61,12 +62,16 @@ const start = async () => {
     express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => {
+        let currentUser = null;
         const auth = req ? req.headers.authorization : null;
         if (auth && auth.toLowerCase().startsWith("bearer ")) {
           const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET);
-          const currentUser = await User.findById(decodedToken.id);
-          return { currentUser };
+          currentUser = await User.findById(decodedToken.id);
         }
+
+        const loaders = createLoaders();
+
+        return { currentUser, loaders };
       },
     })
   );
