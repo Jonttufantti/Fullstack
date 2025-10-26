@@ -9,6 +9,7 @@ import Notify from "./components/Notify";
 import LoginForm from "./components/LoginForm";
 import { useApolloClient } from "@apollo/client/react";
 import RecommendedBooks from "./components/RecommendedBooks";
+import { updateCache, mergeAuthors } from "./utils/cache";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -26,11 +27,18 @@ const App = () => {
   };
 
   useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
-      console.log(data);
-      const newBook = data.data.bookAdded;
-      window.alert(
-        `New book added: ${newBook.title} by ${newBook.author.name}`
+    onData: ({ data, client }) => {
+      const addedBook = data.data.bookAdded;
+      alert(`New book added: ${addedBook.title}`);
+
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook, "allBooks");
+
+      updateCache(
+        client.cache,
+        { query: ALL_AUTHORS },
+        addedBook.author,
+        "allAuthors",
+        mergeAuthors
       );
     },
   });
