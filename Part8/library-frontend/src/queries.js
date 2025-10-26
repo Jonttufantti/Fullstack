@@ -24,6 +24,18 @@ export const ALL_BOOKS = gql`
   }
 `;
 
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    author {
+      name
+      born
+    }
+    published
+    genres
+  }
+`;
+
 export const ADD_BOOK = gql`
   mutation create(
     $title: String!
@@ -46,6 +58,16 @@ export const ADD_BOOK = gql`
       }
     }
   }
+`;
+
+export const FIND_BOOK = gql`
+  query findBookByTitle($titleToSearch: String!) {
+    findBook(title: $ntitleToSearch) {
+      ...BookDetails
+    }
+  }
+
+  ${BOOK_DETAILS}
 `;
 
 export const EDIT_AUTHOR = gql`
@@ -72,4 +94,13 @@ export const ME = gql`
       favoriteGenre
     }
   }
+`;
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
 `;
