@@ -8,7 +8,10 @@ interface ExerciseData {
   average: number;
 }
 
-const calculateExercises = (target: number, hours: number[]): ExerciseData => {
+export const calculateExercises = (
+  target: number,
+  hours: number[]
+): ExerciseData => {
   const periodLength = hours.length;
   let trainingDays = 0;
   hours.forEach((element) => {
@@ -43,12 +46,13 @@ const calculateExercises = (target: number, hours: number[]): ExerciseData => {
   };
 };
 
-try {
-  const args = process.argv.slice(2).map(Number);
-  if (args.some(isNaN)) throw new Error("All arguments must be numbers.");
-
-  const [target, ...hours] = args;
-  console.log(calculateExercises(target, hours));
-} catch (error: unknown) {
-  if (error instanceof Error) console.log("Error:", error.message);
+if (require.main === module) {
+  try {
+    const args = process.argv.slice(2).map(Number);
+    if (args.some(isNaN)) throw new Error("All arguments must be numbers.");
+    const [target, ...hours] = args;
+    console.log(calculateExercises(target, hours));
+  } catch (error: unknown) {
+    if (error instanceof Error) console.log("Error:", error.message);
+  }
 }
