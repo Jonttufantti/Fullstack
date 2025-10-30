@@ -18,7 +18,7 @@ const calculateExercises = (target: number, hours: number[]): ExerciseData => {
   let rating = 2;
   if (average > target) rating = 3;
   else if (average < target) rating = 1;
-  let ratingDescription: string;
+  let ratingDescription: string = "";
   switch (rating) {
     case 1:
       ratingDescription = "not too bad but could be better";
