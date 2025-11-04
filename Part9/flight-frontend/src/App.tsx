@@ -1,33 +1,25 @@
 import { useEffect, useState } from "react";
-import { getAllDiaries } from "./services/diaryService";
+import diaryService from "./services/diaryService";
 import type { DiaryEntry } from "./types";
+import DiaryList from "./components/DiaryList";
+import DiaryForm from "./components/DiaryForm";
 
 const App = () => {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getAllDiaries();
-      setDiaries(data);
-    };
-    fetchData();
+    diaryService.getAll().then((data) => setDiaries(data));
   }, []);
+
+  const addDiary = (entry: DiaryEntry) => {
+    setDiaries(diaries.concat(entry));
+  };
 
   return (
     <div>
       <h1>Flight Diaries</h1>
-      {diaries.map((d) => (
-        <div key={d.id} style={{ marginBottom: "1rem" }}>
-          <h3>{d.date}</h3>
-          <p>Visibility: {d.visibility}</p>
-          <p>Weather: {d.weather}</p>
-          {d.comment && (
-            <p>
-              <i>{d.comment}</i>
-            </p>
-          )}
-        </div>
-      ))}
+      <DiaryForm onAdd={addDiary} />
+      <DiaryList diaries={diaries} />
     </div>
   );
 };
