@@ -14,6 +14,7 @@ const getNonSensitiveEntries = (): NonSensitiveEntry[] => {
       dateOfBirth,
       gender,
       occupation,
+      entries: [],
     })
   );
 };
