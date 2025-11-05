@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Patient, Diagnosis } from "../types";
+import { Patient, Diagnosis, Entry } from "../types";
 import patientService from "../services/patients";
 import diagnosesService from "../services/diagnoses";
 import { Typography, CircularProgress } from "@mui/material";
 import EntryDetails from "./EntryDetails";
+import AddEntryForm from "./AddEntryForm";
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleEntryAdded = (newEntry: Entry) => {
+    if (!patient) return;
+    setPatient({
+      ...patient,
+      entries: [...patient.entries, newEntry],
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +49,8 @@ const PatientPage = () => {
       <p>SSN: {patient.ssn}</p>
       <p>Occupation: {patient.occupation}</p>
       <p>Date of Birth: {patient.dateOfBirth}</p>
+
+      <AddEntryForm patientId={patient.id} onEntryAdded={handleEntryAdded} />
 
       <Typography variant="h6">Entries</Typography>
       {patient.entries.length === 0 ? (
