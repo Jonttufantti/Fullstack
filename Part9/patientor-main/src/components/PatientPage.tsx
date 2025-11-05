@@ -1,28 +1,34 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Patient } from "../types";
+import { Patient, Diagnosis } from "../types";
 import patientService from "../services/patients";
+import diagnosesService from "../services/diagnoses";
 import { Typography, CircularProgress } from "@mui/material";
 import EntryDetails from "./EntryDetails";
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPatient = async () => {
+    const fetchData = async () => {
       if (!id) return;
       try {
-        const data = await patientService.getById(id);
-        setPatient(data);
+        const [patientData, diagnosisData] = await Promise.all([
+          patientService.getById(id),
+          diagnosesService.getAll(),
+        ]);
+        setPatient(patientData);
+        setDiagnoses(diagnosisData);
       } catch (e) {
         console.error(e);
       } finally {
         setLoading(false);
       }
     };
-    void fetchPatient();
+    void fetchData();
   }, [id]);
 
   if (loading) return <CircularProgress />;
@@ -40,7 +46,7 @@ const PatientPage = () => {
         <p>No entries yet.</p>
       ) : (
         patient.entries.map((entry) => (
-          <EntryDetails key={entry.id} entry={entry} />
+          <EntryDetails key={entry.id} entry={entry} diagnoses={diagnoses} />
         ))
       )}
     </div>

@@ -1,13 +1,29 @@
-import {
-  Patient,
-  Entry,
-  HospitalEntry,
-  OccupationalHealthcareEntry,
-  HealthCheckEntry,
-} from "../types";
+import { Entry, Diagnosis } from "../types";
 import { Typography, Box } from "@mui/material";
 
-const EntryDetails = ({ entry }: { entry: Entry }) => {
+const EntryDetails = ({
+  entry,
+  diagnoses,
+}: {
+  entry: Entry;
+  diagnoses: Diagnosis[];
+}) => {
+  const renderDiagnosisCodes = (codes?: string[]) => {
+    if (!codes) return null;
+    return (
+      <ul>
+        {codes.map((code) => {
+          const diagnosis = diagnoses.find((d) => d.code === code);
+          return (
+            <li key={code}>
+              {code} {diagnosis ? `- ${diagnosis.name}` : ""}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
+
   switch (entry.type) {
     case "Hospital":
       return (
@@ -18,13 +34,10 @@ const EntryDetails = ({ entry }: { entry: Entry }) => {
           <Typography>
             Discharge: {entry.discharge.date} - {entry.discharge.criteria}
           </Typography>
-          {entry.diagnosisCodes && (
-            <Typography>
-              Diagnosis Codes: {entry.diagnosisCodes.join(", ")}
-            </Typography>
-          )}
+          {renderDiagnosisCodes(entry.diagnosisCodes)}
         </Box>
       );
+
     case "OccupationalHealthcare":
       return (
         <Box mb={2} p={1} border={1} borderRadius={2}>
@@ -38,13 +51,10 @@ const EntryDetails = ({ entry }: { entry: Entry }) => {
               {entry.sickLeave.endDate}
             </Typography>
           )}
-          {entry.diagnosisCodes && (
-            <Typography>
-              Diagnosis Codes: {entry.diagnosisCodes.join(", ")}
-            </Typography>
-          )}
+          {renderDiagnosisCodes(entry.diagnosisCodes)}
         </Box>
       );
+
     case "HealthCheck":
       return (
         <Box mb={2} p={1} border={1} borderRadius={2}>
@@ -52,13 +62,10 @@ const EntryDetails = ({ entry }: { entry: Entry }) => {
           <Typography>Type: Health Check</Typography>
           <Typography>Description: {entry.description}</Typography>
           <Typography>Rating: {entry.healthCheckRating}</Typography>
-          {entry.diagnosisCodes && (
-            <Typography>
-              Diagnosis Codes: {entry.diagnosisCodes.join(", ")}
-            </Typography>
-          )}
+          {renderDiagnosisCodes(entry.diagnosisCodes)}
         </Box>
       );
+
     default:
       return assertNever(entry);
   }
