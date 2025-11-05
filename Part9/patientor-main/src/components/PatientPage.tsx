@@ -50,7 +50,11 @@ const PatientPage = () => {
       <p>Occupation: {patient.occupation}</p>
       <p>Date of Birth: {patient.dateOfBirth}</p>
 
-      <AddEntryForm patientId={patient.id} onEntryAdded={handleEntryAdded} />
+      <AddEntryForm
+        patientId={patient.id}
+        onEntryAdded={handleEntryAdded}
+        diagnoses={diagnoses}
+      />
 
       <Typography variant="h6">Entries</Typography>
       {patient.entries.length === 0 ? (
