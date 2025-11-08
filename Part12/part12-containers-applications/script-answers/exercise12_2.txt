@@ -1,0 +1,15 @@
+Script started on 2025-11-07 18:03:34+02:00 [TERM="xterm-256color" TTY="/dev/pts/6" COLUMNS="238" LINES="59"]
+[?2004h]0;jonttufantti@jonttufantti-MS-7E26: ~[01;32mjonttufantti@jonttufantti-MS-7E26[00m:[01;34m~[00m$ exitdocker run -it ubuntu bash
+[?2004l
+[?2004h]0;root@aedc54112d00: /root@aedc54112d00:/# mkdir /usr/src/app
+[?2004l
+[?2004h]0;root@aedc54112d00: /root@aedc54112d00:/# mkdir /usr/src/appir[1P[1P[1P[1P[1P[1@t[1@o[1@u[1@c[1@h /usr/src/app/index.js
+[?2004l
+[?2004h]0;root@aedc54112d00: /root@aedc54112d00:/# [Kexit
+[?2004l
+exit
+[?2004h]0;jonttufantti@jonttufantti-MS-7E26: ~[01;32mjonttufantti@jonttufantti-MS-7E26[00m:[01;34m~[00m$ exit
+[?2004l
+exit
+
+Script done on 2025-11-07 18:04:15+02:00 [COMMAND_EXIT_CODE="0"]
