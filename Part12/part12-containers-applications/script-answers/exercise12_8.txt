@@ -1,0 +1,147 @@
+Script started on 2025-11-16 16:29:39+02:00 [TERM="xterm-256color" TTY="/dev/pts/7" COLUMNS="174" LINES="18"]
+[?2004h]0;jonttufantti@jonttufantti-MS-7E26: ~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[01;32mjonttufantti@jonttufantti-MS-7E26[00m:[01;34m~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[00m$ docker ps
+[?2004lCONTAINER ID   IMAGE     COMMAND                  CREATED             STATUS         PORTS                                           NAMES
+d6465d60d804   mongo     "docker-entrypoint.s…"   About an hour ago   Up 2 minutes   0.0.0.0:3456->27017/tcp, [::]:3456->27017/tcp   todo-app-mongo-1
+[?2004h]0;jonttufantti@jonttufantti-MS-7E26: ~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[01;32mjonttufantti@jonttufantti-MS-7E26[00m:[01;34m~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[00m$ [7m docker exec -it[27m docker exec -it[C[1P[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C d64
+[?2004ldocker: 'docker exec' requires at least 2 arguments
+
+Usage:  docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
+
+See 'docker exec --help' for more information
+[?2004h]0;jonttufantti@jonttufantti-MS-7E26: ~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[01;32mjonttufantti@jonttufantti-MS-7E26[00m:[01;34m~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[00m$ docker exec -it d64 bash
+[?2004l[?2004hroot@d6465d60d804:/# [7mmongo -u root -p example --authenticationDatabase admin --host localhost --port 3456[27m
+[Aroot@d6465d60d804:/# mongo -u root -p example --authenticationDatabase admin --host localhost --port 3456
+[A
+[?2004lbash: mongo: command not found
+[?2004hroot@d6465d60d804:/# [7mmongosh -u root -p example --authenticationDatabase admin[27m
+[Aroot@d6465d60d804:/# mongosh -u root -p example --authenticationDatabase admin
+[A
+[?2004l]0;mongosh mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=adminCurrent Mongosh Log ID:	6919e08f911254ca509dc29c
+Connecting to:		[1m[32mmongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin&appName=mongosh+2.5.9[0m
+Using MongoDB:		8.2.1
+[1m[33mUsing Mongosh[0m:		2.5.9
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+[1G[0J [1G[?2004h[1m[33m------[0m
+   [1m[33mThe server generated these startup warnings when booting[0m
+   2025-11-16T14:27:16.346+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2025-11-16T14:27:16.596+00:00: Soft rlimits for open file descriptors too low
+   2025-11-16T14:27:16.596+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2025-11-16T14:27:16.596+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2025-11-16T14:27:16.596+00:00: We suggest setting the contents of sysfsFile to 0.
+   2025-11-16T14:27:16.597+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+[1m[33m------[0m
+
+[1G[0Jtest> [7Gshow dbS
+Uncaught [1m[31mMongoshInvalidInputError[0m: [COMMON-10001] 'dbS' is not a valid argument for "show".
+[1G[0Jtest> [7G[1G[0Jtest> show dbS[15G[1G[0Jtest> show db[14Gs
+[1madmin[0m         100.00 KiB
+[1mconfig[0m         80.00 KiB
+[1mlocal[0m          64.00 KiB
+[1mthe_database[0m   72.00 KiB
+[1G[0Jtest> [7Guse the_database[1D[1D[1D[1D[1D[1D[1D[1D[1G[0Jtest> use thedatabase[14G[1G[0Jtest> use the_database[15G[1G[0Jtest> use thedatabase[14G[1G[0Jtest> use the_database[15G[8C
+switched to db the_database
+[1G[0Jthe_database> [15Gshow collections
+[1mtodos[0m
+[1G[0Jthe_database> [15G db.todos.find({})
+[
+  {
+    _id: ObjectId([32m'6919cba9b74ff461159dc29d'[39m),
+    text: [32m'Write code'[39m,
+    done: [33mtrue[39m
+  },
+  {
+    _id: ObjectId([32m'6919cba9b74ff461159dc29e'[39m),
+    text: [32m'Learn about containers'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId([32m'6919da939dfa67abc16a5200'[39m),
+    text: [32m'HealthCheck'[39m,
+    done: [33mfalse[39m,
+    __v: [33m0[39m
+  }
+]
+[1G[0Jthe_database> [15Gdb.todos.insertOne({text[33mtext[39m: [32m"[39m[32m"[39m[1D[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49m"[39m[42G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mt"[39m[43G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mte"[39m[44G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mtes"[39m[45G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mtest"[39m[46G[1C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m[47G, d[36mdo[39mdone: fals[33mfalse[39m]};
+Uncaught:
+[1m[31mSyntaxError[0m: Unexpected token, expected "," (1:45)
+
+[0m[31m[1m>[22m[39m[90m 1 |[39m db[33m.[39mtodos[33m.[39minsertOne({text[33m:[39m [32m"test"[39m[33m,[39m done[33m:[39m [36mfalse[39m]}[33m;[39m
+ [90m   |[39m                                              [31m[1m^[22m[39m
+ [90m 2 |[39m[0m
+
+[1G[0Jthe_database> [15G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m]};[63G[1D[1D[1G[0Jthe_database> db.todos.insertOne([44m{[49m[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m]};[61G[1G[0Jthe_database> db.todos.insertOne([44m{[49m[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m};[60G[1C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m};[61G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m});[62G[1C
+{
+  acknowledged: [33mtrue[39m,
+  insertedId: ObjectId([32m'6919e195911254ca509dc29d'[39m)
+}
+[1G[0Jthe_database> [15G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m});[63G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m]};[63G[1G[0Jthe_database>  db.todos.find({})[33G
+[
+  {
+    _id: ObjectId([32m'6919cba9b74ff461159dc29d'[39m),
+    text: [32m'Write code'[39m,
+    done: [33mtrue[39m
+  },
+  {
+    _id: ObjectId([32m'6919cba9b74ff461159dc29e'[39m),
+    text: [32m'Learn about containers'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId([32m'6919da939dfa67abc16a5200'[39m),
+    text: [32m'HealthCheck'[39m,
+    done: [33mfalse[39m,
+    __v: [33m0[39m
+  },
+  {
+    _id: ObjectId([32m'6919e195911254ca509dc29d'[39m),
+    text: [32m'test'[39m,
+    done: [33mfalse[39m
+  }
+]
+[1G[0Jthe_database> [15G[1G[0Jthe_database>  db.todos.find({})[33G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m});[63G[1D[1D[1G[0Jthe_database> db.todos.insertOne[44m([49m{[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m});[61G[1D[1G[0Jthe_database> db.todos.insertOne([44m{[49m[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m});[60G[1D[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m});[59G[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1D[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mtest"[39m, [33mdone[39m: [33mfalse[39m});[46G[1D[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"test"[39m, [33mdone[39m: [33mfalse[39m});[45G[1C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mtest"[39m, [33mdone[39m: [33mfalse[39m});[46G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mtes"[39m, [33mdone[39m: [33mfalse[39m});[45G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mte"[39m, [33mdone[39m: [33mfalse[39m});[44G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mt"[39m, [33mdone[39m: [33mfalse[39m});[43G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49m"[39m, [33mdone[39m: [33mfalse[39m});[42G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mI"[39m, [33mdone[39m: [33mfalse[39m});[43G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIn"[39m, [33mdone[39m: [33mfalse[39m});[44G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mInc"[39m, [33mdone[39m: [33mfalse[39m});[45G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncr"[39m, [33mdone[39m: [33mfalse[39m});[46G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncre"[39m, [33mdone[39m: [33mfalse[39m});[47G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrea"[39m, [33mdone[39m: [33mfalse[39m});[48G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncreas"[39m, [33mdone[39m: [33mfalse[39m});[49G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease"[39m, [33mdone[39m: [33mfalse[39m});[50G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease "[39m, [33mdone[39m: [33mfalse[39m});[51G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease t"[39m, [33mdone[39m: [33mfalse[39m});[52G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease th"[39m, [33mdone[39m: [33mfalse[39m});[53G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the"[39m, [33mdone[39m: [33mfalse[39m});[54G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the "[39m, [33mdone[39m: [33mfalse[39m});[55G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the n"[39m, [33mdone[39m: [33mfalse[39m});[56G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the nu"[39m, [33mdone[39m: [33mfalse[39m});[57G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the num"[39m, [33mdone[39m: [33mfalse[39m});[58G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the numb"[39m, [33mdone[39m: [33mfalse[39m});[59G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the numbe"[39m, [33mdone[39m: [33mfalse[39m});[60G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number"[39m, [33mdone[39m: [33mfalse[39m});[61G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number "[39m, [33mdone[39m: [33mfalse[39m});[62G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number o"[39m, [33mdone[39m: [33mfalse[39m});[63G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of"[39m, [33mdone[39m: [33mfalse[39m});[64G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of "[39m, [33mdone[39m: [33mfalse[39m});[65G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of t"[39m, [33mdone[39m: [33mfalse[39m});[66G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of to"[39m, [33mdone[39m: [33mfalse[39m});[67G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of too"[39m, [33mdone[39m: [33mfalse[39m});[68G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tool"[39m, [33mdone[39m: [33mfalse[39m});[69G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools"[39m, [33mdone[39m: [33mfalse[39m});[70G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools "[39m, [33mdone[39m: [33mfalse[39m});[71G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools i"[39m, [33mdone[39m: [33mfalse[39m});[72G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in"[39m, [33mdone[39m: [33mfalse[39m});[73G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in "[39m, [33mdone[39m: [33mfalse[39m});[74G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in m"[39m, [33mdone[39m: [33mfalse[39m});[75G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my"[39m, [33mdone[39m: [33mfalse[39m});[76G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my "[39m, [33mdone[39m: [33mfalse[39m});[77G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my t"[39m, [33mdone[39m: [33mfalse[39m});[78G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my to"[39m, [33mdone[39m: [33mfalse[39m});[79G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my too"[39m, [33mdone[39m: [33mfalse[39m});[80G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my tool"[39m, [33mdone[39m: [33mfalse[39m});[81G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my tool "[39m, [33mdone[39m: [33mfalse[39m});[82G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my tool b"[39m, [33mdone[39m: [33mfalse[39m});[83G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my tool be"[39m, [33mdone[39m: [33mfalse[39m});[84G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my tool bel"[39m, [33mdone[39m: [33mfalse[39m});[85G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [44m[32m"[49mIncrease the number of tools in my tool belt"[39m, [33mdone[39m: [33mfalse[39m});[86G[17C[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m: [33mfalse[39m});[103G
+{
+  acknowledged: [33mtrue[39m,
+  insertedId: ObjectId([32m'6919e1ca911254ca509dc29e'[39m)
+}
+[1G[0Jthe_database> [15G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m: [32m"Increase the number of tools in my tool belt"[39m, [33mdone[39m: [33mfalse[39m});[103G[1G[0Jthe_database>  db.todos.find({})[33G
+[
+  {
+    _id: ObjectId([32m'6919cba9b74ff461159dc29d'[39m),
+    text: [32m'Write code'[39m,
+    done: [33mtrue[39m
+  },
+  {
+    _id: ObjectId([32m'6919cba9b74ff461159dc29e'[39m),
+    text: [32m'Learn about containers'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId([32m'6919da939dfa67abc16a5200'[39m),
+    text: [32m'HealthCheck'[39m,
+    done: [33mfalse[39m,
+    __v: [33m0[39m
+  },
+  {
+    _id: ObjectId([32m'6919e195911254ca509dc29d'[39m),
+    text: [32m'test'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId([32m'6919e1ca911254ca509dc29e'[39m),
+    text: [32m'Increase the number of tools in my tool belt'[39m,
+    done: [33mfalse[39m
+  }
+]
+[1G[0Jthe_database> [15Gexit
+[?2004l[?2004hroot@d6465d60d804:/# exit
+[?2004lexit
+[?2004h]0;jonttufantti@jonttufantti-MS-7E26: ~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[01;32mjonttufantti@jonttufantti-MS-7E26[00m:[01;34m~/Projects/Fullstack/Part12/part12-containers-applications/todo-app[00m$ exit
+[?2004lexit
+
+Script done on 2025-11-16 16:38:26+02:00 [COMMAND_EXIT_CODE="0"]
