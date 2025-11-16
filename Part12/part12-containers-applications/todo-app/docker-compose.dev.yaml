@@ -22,13 +22,17 @@ services:
       - redis_data:/data
 
   todo-frontend:
+    image: todo-front-dev
     build:
       context: ./todo-frontend
-      dockerfile: Dockerfile
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./todo-frontend:/usr/src/app
     ports:
       - 5173:5173
     environment:
       VITE_BACKEND_URL: http://172.17.0.1:3000
+    container_name: todo-front-dev
 
 volumes:
   mongo_data:
