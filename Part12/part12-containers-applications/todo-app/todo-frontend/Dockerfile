@@ -1,16 +1,18 @@
-FROM node:20 AS test-stage
 
-WORKDIR /usr/src/app
+#FROM node:20 AS test-stage
 
-COPY package*.json ./
+#WORKDIR /usr/src/app
 
-RUN npm ci
+#COPY package*.json ./
 
-COPY . .
+#RUN npm ci
 
-RUN npm test
+#COPY . .
+
+#RUN npm test
 
 
+# Build stage
 
 FROM node:20 AS build-stage
 
@@ -18,26 +20,34 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm ci --omit=dev
 
 COPY . .
 
-ENV VITE_BACKEND_URL=http://localhost:3000
+ENV VITE_BACKEND_URL=http://localhost:8080/api
 
 RUN npm run build
 
+# Production stage
 
+FROM nginx:alpine
 
-FROM node:20
+COPY --from=build-stage /usr/src/app/dist /usr/share/nginx/html
 
-WORKDIR /usr/src/app
+EXPOSE 80
 
-COPY package*.json ./
+CMD ["nginx", "-g", "daemon off;"]
 
-RUN npm ci
+#FROM node:20
 
-COPY . .
+#WORKDIR /usr/src/app
 
-EXPOSE 5173
+#COPY package*.json ./
 
-CMD ["npm", "run", "dev", "--", "--host"]
+#RUN npm ci
+
+#COPY . .
+
+#EXPOSE 5173
+
+#CMD ["npm", "run", "dev", "--", "--host"]
