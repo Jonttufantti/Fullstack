@@ -1,0 +1,40 @@
+services:
+  mongo:
+    image: mongo:6
+    container_name: varausapp-mongo
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: varausapp-backend
+    environment:
+      MONGO_URI: mongodb://mongo:27017/test
+      JWT_SECRET: ${JWT_SECRET:-dev-secret}
+    volumes:
+      - ./backend/data:/app/data
+    depends_on:
+      - mongo
+    command: sh -c "npm run seed && npm start"
+
+  frontend:
+    build: ./frontend
+    container_name: varausapp-frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080/api
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: varausapp-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  mongo-data:
