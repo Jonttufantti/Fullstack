@@ -40,12 +40,14 @@ router.delete("/:id", blogFinder, async (req, res) => {
   }
 });
 
-router.put("/:id", blogFinder, async (req, res) => {
-  if (req.blog) {
+router.patch("/:id", blogFinder, async (req, res) => {
+  if (!req.blog) return res.status(404).end();
+
+  try {
     await req.blog.update(req.body);
     res.json(req.blog);
-  } else {
-    res.status(404).end();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 
