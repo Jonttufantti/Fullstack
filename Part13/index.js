@@ -4,10 +4,13 @@ const { Sequelize, Model, DataTypes } = require("sequelize");
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialectOptions: {
     ssl: false,
   },
+  logging: console.log,
 });
 
 class Blog extends Model {}
@@ -43,8 +46,13 @@ Blog.init(
   }
 );
 
+Blog.sync();
+
 app.get("/api/blogs", async (req, res) => {
   const blogs = await Blog.findAll();
+
+  console.log(JSON.stringify(blogs, null, 2));
+
   res.json(blogs);
 });
 
@@ -54,6 +62,36 @@ app.post("/api/blogs", async (req, res) => {
     return res.json(blog);
   } catch (error) {
     return res.status(400).json({ error });
+  }
+});
+
+app.get("/api/blogs/:id", async (req, res) => {
+  const blog = await Blog.findByPk(req.params.id);
+  if (blog) {
+    console.log(blog.toJSON());
+    res.json(blog);
+  } else {
+    res.status(404).end();
+  }
+});
+
+app.put("/api/blogs/:id", async (req, res) => {
+  const blog = await Blog.findByPk(req.params.id);
+  if (blog) {
+    await blog.update(req.body);
+    res.json(blog);
+  } else {
+    res.status(404).end();
+  }
+});
+
+app.delete("/api/blogs/:id", async (req, res) => {
+  const blog = await Blog.findByPk(req.params.id);
+  if (blog) {
+    await blog.destroy();
+    res.status(204).end();
+  } else {
+    res.status(404).end();
   }
 });
 
