@@ -37,6 +37,26 @@ router.get("/", async (req, res) => {
   res.json(users);
 });
 
+router.get("/:id", async (req, res) => {
+  const user = await User.findByPk(req.params.id, {
+    attributes: ["name", "username"],
+    include: {
+      model: Blog,
+      as: "readings",
+      attributes: ["id", "url", "title", "author", "likes", "year"],
+      through: {
+        attributes: [],
+      },
+    },
+  });
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ error: "user not found" });
+  }
+});
+
 router.post("/", async (req, res, next) => {
   try {
     const user = await User.create(req.body);

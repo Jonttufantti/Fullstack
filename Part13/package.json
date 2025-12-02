@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "migration:down": "node util/rollback.js",
+    "migration:up": "node util/migration.js",
+    "seed": "node util/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
