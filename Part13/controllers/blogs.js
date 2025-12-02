@@ -1,40 +1,38 @@
 const router = require("express").Router();
-const { Blog } = require("../models");
-const { User } = require("../models");
+const jwt = require("jsonwebtoken");
+const { Blog, User } = require("../models");
+const { Op } = require("sequelize");
+const { SECRET } = require("../util/config");
+const { tokenExtractor } = require("../util/middleware");
 
 router.get("/", async (req, res, next) => {
   try {
+    const where = {};
+
+    if (req.query.search) {
+      const keyword = `%${req.query.search}%`;
+      where[Op.or] = [
+        { title: { [Op.iLike]: keyword } },
+        { author: { [Op.iLike]: keyword } },
+      ];
+    }
+
     const blogs = await Blog.findAll({
+      where,
       attributes: { exclude: ["userId"] },
       include: {
         model: User,
         attributes: ["name"],
       },
+      order: [["likes", "DESC"]],
     });
+
     console.log(JSON.stringify(blogs, null, 2));
     res.json(blogs);
   } catch (err) {
     next(err);
   }
 });
-
-const tokenExtractor = (req, res, next) => {
-  const authorization = req.get("authorization");
-  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-    try {
-      console.log(authorization.substring(7));
-      console.log(SECRET);
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET);
-    } catch (error) {
-      console.log(error);
-      return res.status(401).json({ error: "token invalid" });
-    }
-  } else {
-    return res.status(401).json({ error: "token missing" });
-  }
-
-  next();
-};
 
 router.post("/", tokenExtractor, async (req, res) => {
   try {
@@ -74,7 +72,7 @@ router.delete("/:id", tokenExtractor, blogFinder, async (req, res) => {
 
   if (req.blog.userId !== req.decodedToken.id) {
     return res
-      .status(401)
+      .status(403)
       .json({ error: "only the creator can delete a blog" });
   }
 
@@ -84,6 +82,12 @@ router.delete("/:id", tokenExtractor, blogFinder, async (req, res) => {
 
 router.patch("/:id", blogFinder, async (req, res, next) => {
   if (!req.blog) return res.status(404).end();
+
+  if (req.blog.userId !== req.decodedToken.id) {
+    return res
+      .status(403)
+      .json({ error: "only the creator can update the blog" });
+  }
 
   const allowedFields = ["title", "author", "url", "likes"];
   const updatedFields = {};
