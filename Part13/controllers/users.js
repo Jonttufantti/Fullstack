@@ -38,19 +38,31 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const user = await User.findByPk(req.params.id, {
+  const userId = req.params.id;
+
+  const includeClause = {
+    model: Blog,
+    as: "readings",
+    attributes: ["id", "url", "title", "author", "likes", "year"],
+    through: {
+      attributes: ["id", "read"],
+      as: "readinglists",
+    },
+  };
+
+  if (req.query.read !== undefined) {
+    if (req.query.read !== "true" && req.query.read !== "false") {
+      return res.status(400).json({
+        error: "read parameter must be 'true' or 'false'",
+      });
+    }
+    const readValue = req.query.read === "true";
+    includeClause.through.where = { read: readValue };
+  }
+
+  const user = await User.findByPk(userId, {
     attributes: ["name", "username"],
-    include: [
-      {
-        model: Blog,
-        as: "readings",
-        attributes: ["id", "url", "title", "author", "likes", "year"],
-        through: {
-          attributes: ["id", "read"],
-          as: "readinglists",
-        },
-      },
-    ],
+    include: [includeClause],
   });
 
   if (user) {
