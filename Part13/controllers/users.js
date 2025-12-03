@@ -1,9 +1,9 @@
+// controllers/users.js
 const router = require("express").Router();
-
-const { User, Blog } = require("../models");
 const { tokenExtractor } = require("../util/middleware");
 
 const isAdmin = async (req, res, next) => {
+  const { User } = require("../models");
   const user = await User.findByPk(req.decodedToken.id);
   if (!user.admin) {
     return res.status(401).json({ error: "operation not allowed" });
@@ -12,6 +12,7 @@ const isAdmin = async (req, res, next) => {
 };
 
 router.put("/:username", tokenExtractor, isAdmin, async (req, res) => {
+  const { User } = require("../models");
   const user = await User.findOne({
     where: {
       username: req.params.username,
@@ -28,6 +29,7 @@ router.put("/:username", tokenExtractor, isAdmin, async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
+  const { User, Blog } = require("../models");
   const users = await User.findAll({
     include: {
       model: Blog,
@@ -38,6 +40,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  const { User, Blog } = require("../models");
   const userId = req.params.id;
 
   const includeClause = {
@@ -74,6 +77,7 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res, next) => {
   try {
+    const { User } = require("../models");
     const user = await User.create(req.body);
     res.json(user);
   } catch (error) {
@@ -81,8 +85,10 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+/*
 router.put("/:username", async (req, res, next) => {
   try {
+    const { User } = require("../models");
     const user = await User.findOne({
       where: { username: req.params.username },
     });
@@ -99,5 +105,6 @@ router.put("/:username", async (req, res, next) => {
     next(error);
   }
 });
+*/
 
 module.exports = router;

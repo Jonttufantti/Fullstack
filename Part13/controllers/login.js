@@ -1,9 +1,12 @@
+// controllers/login.js
 const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const { SECRET } = require("../util/config");
-const User = require("../models/user");
 
 router.post("/", async (request, response) => {
+  // Import models inside the route to avoid circular dependency
+  const { User, Session } = require("../models");
+
   const body = request.body;
 
   const user = await User.findOne({
@@ -32,6 +35,12 @@ router.post("/", async (request, response) => {
   };
 
   const token = jwt.sign(userForToken, SECRET);
+
+  // Store the session in the database
+  await Session.create({
+    userId: user.id,
+    token,
+  });
 
   response
     .status(200)

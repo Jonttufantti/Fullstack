@@ -1,6 +1,6 @@
 // util/seed.js
 const { sequelize } = require("./db");
-const { User, Blog, ReadingList } = require("../models");
+const { User, Blog, ReadingList, Session } = require("../models");
 
 const seedDatabase = async () => {
   try {
@@ -57,19 +57,16 @@ const seedDatabase = async () => {
     console.log("Creating users...");
     const users = await User.bulkCreate([
       {
-        username: "mluukkai@iki.fi",
-        name: "Matti Luukkainen",
-        password: "password123",
+        username: "joona@gmail.fi",
+        name: "Joona Sandbacka",
       },
       {
         username: "testuser@example.com",
         name: "Test User",
-        password: "test123",
       },
       {
         username: "admin@example.com",
         name: "Admin User",
-        password: "admin123",
         admin: true,
       },
     ]);
